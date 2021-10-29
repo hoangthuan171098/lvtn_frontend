@@ -60,7 +60,7 @@ class ProductList extends Component {
           return val.name.toLowerCase().indexOf(search) !== -1;
         })  
     }
-    console.log(products.length)
+    console.log(products)
     return (
       <div className="app__container">
         <div className="grid wide">
@@ -97,6 +97,7 @@ class ProductList extends Component {
                 <div className="header__search ">
                   <div className="header__search-input-wrap">
                     <input
+                    style={{border:"none"}}
                       type="text"
                       className="header__search-input"
                       placeholder="Nhập để tìm kiếm sản phẩm"
@@ -142,8 +143,9 @@ class ProductList extends Component {
                               backgroundImage: `url(${
                                 process.env.REACT_APP_BACKEND_URL +
                                 product.image.url
-                              })`,
+                              })`
                             }}
+                            
                           />
                           <h4 className="home-product-item__name">
                             {product.name}
@@ -207,8 +209,8 @@ class ProductList extends Component {
                 </li>
                 {pageNumber.map((number)=>{
                   return(
-                    <li className="pagination-item pagination-item--active" style={{cursor:"pointer"}}>
-                      <a href onClick={() => this.paginate(number)} className="pagination-item__link">
+                    <li className="pagination-item pagination-item--active"  style={{cursor:"pointer",fontSize:14 + 'px'}}>
+                      <a href onClick={() => this.paginate(number)} className="pagination-item__link" style={{fontSize:14 + 'px'}}> 
                         {number}
                       </a>
                     </li>
@@ -247,7 +249,7 @@ class ProductList extends Component {
                 </li>
                 */}
                 <li className="pagination-item">
-                  <a href className="pagination-item__link">
+                  <a href className="pagination-item__link" style={{fontSize:14 + 'px'}}>
                     <i className="pagination-item__icon fas fa-angle-right" />
                   </a>
                 </li> 

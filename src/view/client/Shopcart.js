@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./style/shoppingcart.scss";
 import {withRouter} from "react-router"
+import { ToastContainer, toast } from 'react-toastify';
 class Shopcart extends Component {
   constructor(props){
     super(props);
@@ -49,6 +50,10 @@ class Shopcart extends Component {
   updateMeterClick = (event,index) =>{
     let productList = this.state.productList
     productList[index].quantity_m = Number(event.target.value)
+    if(Number(event.target.value) === 0){
+        toast.error('loi');
+        return;
+    }
     this.setState({productList:productList})
     Cookie.set('cart',JSON.stringify(productList))
   }
@@ -67,10 +72,15 @@ class Shopcart extends Component {
     console.log(this.state.productList)
     Cookie.set('cart',JSON.stringify(productList))
   }
-
+  onBlurQuantity = (e) =>{
+    if(e.target.value <= 0){
+      toast.error("loi")
+      return;
+    }
+  }
   render() {
     var total =0;
-    console.log(this.state.productList)
+   
     return (
       <div className="container padding-bottom-3x mb-1">
         <div className="table-responsive shopping-cart">
@@ -115,22 +125,23 @@ class Shopcart extends Component {
                     </td>
                     <td className="text-center">
                       <div className="count-input" >
-                        <input type="text" style={{ width: 110 + "px" }} defaultValue={item.quantity}
+                        <input type="text" style={{ width: 110 + "px", textAlign:"center"}} pattern="[1-9][0-9]*" defaultValue={(item.quantity).toLocaleString('en')}
                           onChange = {(e) =>this.updateProductClick(e,index)}
+                          onBlur = {(e) =>this.onBlurQuantity(e)}
                          />
                       </div>
                     </td>
                     <td className="text-center">
                       <div className="count-input">
                       
-                        <input type="text" style={{ width: 110 + "px" }} defaultValue={item.quantity_m}
+                        <input type="text" style={{ width: 110 + "px", textAlign:"center"}} defaultValue={(item.quantity_m*1).toLocaleString('en')}
                            onChange = {(e) =>this.updateMeterClick(e,index)}
                          />
                         
                       </div>
                     </td>
-                    <td className="text-center text-lg text-medium">{item.product.price}$</td>
-                    <td className="text-center text-lg text-medium">{parseInt(item.product.price)*item.quantity}$</td>
+                    <td className="text-center text-lg text-medium">{(item.product.price*1).toLocaleString('en')} VNĐ</td>
+                    <td className="text-center text-lg text-medium">{(parseInt(item.product.price)*item.quantity).toLocaleString('en')} VNĐ</td>
                     <td className="text-center">
                       <Link
                         className="remove-from-cart"
@@ -169,7 +180,7 @@ class Shopcart extends Component {
               className="text-medium"
               style={{ fontSize: 20 + "px", color: "red" }}
             >
-              {total}$
+              {total.toLocaleString('en')} VNĐ
             </span>
           </div>
         </div>
