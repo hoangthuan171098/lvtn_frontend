@@ -6,15 +6,17 @@ import { Link } from "react-router-dom";
 import "./styleproductitem.scss";
 import Cookie from "js-cookie";
 import {withRouter} from "react-router"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 class ProductDetailItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: true,
       authenticate: true,
-      quantity: 0,
+      quantity: "",
       color: "",
-      quantity_m: 0,
+      quantity_m: "",
     };
   }
   handleMeter = (e) => {
@@ -40,12 +42,30 @@ class ProductDetailItem extends Component {
 
   addtocart = () => {
     var { productdetail } = this.props;
-    if (this.state.quantity === 0 && this.state.quantity_m === 0) {
-      alert("Xin hãy nhập số cuộn hoặc mét");
+    if (this.state.quantity ==="" ) {
+      toast.error("Vui lòng nhập số Cuộn!");
+     
+      return;
+    }
+    if( this.state.quantity_m === "" ){
+      toast.error("Vui lòng nhập số Mét!");
+     
+      return;
+    }
+    if( this.state.quantity === 0 ){
+      toast.error("Số cuộn không được bằng 0!");
+      return;
+    }
+    if(this.state.quantity_m === 0){
+      toast.error("Số mét không được bằng 0!");
+      return;
+    }
+    if(this.state.color ===""){
+      toast.error("Màu của sản phẩm chưa được chọn!");
       return;
     }
     if (!Cookie.get("username")) {
-      alert("Bạn cần phải đăng nhập để đặt hàng!");
+      toast.error("Bạn cần phải đăng nhập để đặt hàng!");
       return;
     }
     let item = {
@@ -70,7 +90,7 @@ class ProductDetailItem extends Component {
     } else {
       Cookie.set("cart", JSON.stringify([item]));
     }
-    alert("Them san pham vao gio hang thanh cong!");
+    toast.success("Bạn đã thêm thành công sản phẩm vào giỏ hàng!");
     
     window.location.href="/products"
   };
