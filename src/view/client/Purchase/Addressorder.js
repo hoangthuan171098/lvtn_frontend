@@ -123,21 +123,134 @@ export default class Addressorder extends Component {
                         Launch demo modal
                       </Button>
 
-                      <Modal show={this.state.show} onHide={this.handleClose}
+                      <Modal
+                        show={this.state.show}
+                        onHide={this.handleClose}
                         size="md"
                         aria-labelledby="contained-modal-title-vcenter"
                         centered
                       >
-                        <Modal.Header >
-                          
-                        </Modal.Header>
+                        <Modal.Header></Modal.Header>
                         <Modal.Body>
-                          <div className="modal-container">
-                            <div className="modal_title">
-                              Bạn có chắc chắn muốn bỏ sản phẩm này ?
+                          <div className="card border-0">
+                            <div className="card-header pb-0">
+                              <h2 className="card-title space ">Checkout</h2>
+                              <p className="card-text text-muted mt-4 space">
+                                SHIPPING DETAILS
+                              </p>
+                              <hr className="my-0" />
                             </div>
-                            <div className="modal_message">
-                              Dao cạo lông mày tay cầm dài làm từ nhựa tiện dụng
+                            <div className="card-body">
+                              <div className="row justify-content-between">
+                                <div className="col-auto mt-0">
+                                  <p>
+                                    <b>
+                                      BBBootstrap Team Vasant Vihar 110020 New
+                                      Delhi India
+                                    </b>
+                                  </p>
+                                </div>
+                                <div className="col-auto">
+                                  <p>
+                                    <b>BBBootstrap@gmail.com</b>{" "}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="row mt-4">
+                                <div className="col">
+                                  <p className="text-muted mb-2">
+                                    PAYMENT DETAILS
+                                  </p>
+                                  <hr className="mt-0" />
+                                </div>
+                              </div>
+                              <div className="form-group">
+                                {" "}
+                                <label
+                                  htmlFor="NAME"
+                                  className="small text-muted mb-1"
+                                >
+                                  NAME ON CARD
+                                </label>{" "}
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm"
+                                  name="NAME"
+                                  id="NAME"
+                                  aria-describedby="helpId"
+                                  placeholder="BBBootstrap Team"
+                                />{" "}
+                              </div>
+                              <div className="form-group">
+                                {" "}
+                                <label
+                                  htmlFor="NAME"
+                                  className="small text-muted mb-1"
+                                >
+                                  CARD NUMBER
+                                </label>{" "}
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm"
+                                  name="NAME"
+                                  id="NAME"
+                                  aria-describedby="helpId"
+                                  placeholder="4534 5555 5555 5555"
+                                />{" "}
+                              </div>
+                              <div className="row no-gutters">
+                                <div className="col-sm-6 pr-sm-2">
+                                  <div className="form-group">
+                                    {" "}
+                                    <label
+                                      htmlFor="NAME"
+                                      className="small text-muted mb-1"
+                                    >
+                                      VALID THROUGH
+                                    </label>{" "}
+                                    <input
+                                      type="text"
+                                      className="form-control form-control-sm"
+                                      name="NAME"
+                                      id="NAME"
+                                      aria-describedby="helpId"
+                                      placeholder="06/21"
+                                    />{" "}
+                                  </div>
+                                </div>
+                                <div className="col-sm-6">
+                                  <div className="form-group">
+                                    {" "}
+                                    <label
+                                      htmlFor="NAME"
+                                      className="small text-muted mb-1"
+                                    >
+                                      CVC CODE
+                                    </label>{" "}
+                                    <input
+                                      type="text"
+                                      className="form-control form-control-sm"
+                                      name="NAME"
+                                      id="NAME"
+                                      aria-describedby="helpId"
+                                      placeholder={183}
+                                    />{" "}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="row mb-md-5">
+                                <div className="col">
+                                  {" "}
+                                  <button
+                                    type="button"
+                                    name
+                                    id
+                                    className="btn btn-lg btn-block "
+                                  >
+                                    PURCHASE $37 SEK
+                                  </button>{" "}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </Modal.Body>
@@ -146,7 +259,7 @@ export default class Addressorder extends Component {
                             variant="secondary"
                             onClick={this.handleClose}
                           >
-                            Có 
+                            Có
                           </Button>
                           <Button variant="primary" onClick={this.handleClose}>
                             Không

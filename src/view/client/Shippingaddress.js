@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import "./style/shippingaddress.scss";
 import Cookie from "js-cookie";
 import axios from "axios";
+import {Link} from "react-router-dom"
+import { ToastContainer, toast } from "react-toastify";
 export default class Shippingaddress extends Component {
   constructor(props) {
     super(props);
@@ -79,6 +81,10 @@ export default class Shippingaddress extends Component {
   }
   handleSubmit = (event) => {
     event.preventDefault();
+    if(this.state.info.firstName ===""){
+        toast.error("Vui lòng nhập họ của bạn!")
+        return
+    }
     // if(this.state.info.firstName === ""){
     //   this.setState({firstname_error: "Vui lòng nhập vào  Họ của bạn!"})
     //   return
@@ -188,7 +194,45 @@ export default class Shippingaddress extends Component {
   //   location.district = e.target.value;
   //   this.setState({ location: location });
   // };
+  Region = async (e) =>{
+     if(e.target.value !== this.state.info.region){
+      await this.setState({
+        info: { ...this.state.info, region: e.target.value },
+      })
+      await this.setState({
+        info: { ...this.state.info, district: "" },
+      })
+      await this.setState({
+        info: { ...this.state.info, wards: "" },
+      })
+     
+     }
+  }
+  Distric = async (e) =>{
+    if(e.target.value !== this.state.info.district){
+      await this.setState({
+        info: { ...this.state.info, district: e.target.value },
+      })
+      await this.setState({
+        info: { ...this.state.info, wards: "" },
+      })
+
+    
+     }
+  }
+
+  Wards = async (e) =>{
+    
+      await this.setState({
+        info: { ...this.state.info, wards: e.target.value },
+      })
+    
+
+    
+    
+  }
   render() {
+    console.log(this.state.info.region)
     var regions_list = [
       "Hồ Chí Minh",
       "Hà Nội",
@@ -222,6 +266,27 @@ export default class Shippingaddress extends Component {
       "Huyện Củ Chi",
       "Huyện Hóc Môn",
       "Huyện Nhà Bè",
+
+      "Quận Ba Đình",
+      "Quận Bắc Từ Liêm",
+      "Quận Cầu Giấy",
+      "Quận Đống Đa",
+      "Quận Hà Đông",
+      "Quận Hai Bà Trưng",
+      "Quận Hoàn Kiếm",
+      "Quận Hoàng Mai",
+      "Quận Long Biên",
+      "Quận Nam Từ Liêm",
+      "Quận Tây Hồ",
+      "QuậnThanh Xuân",
+      "Thị Xã Sơn Tây",
+      "Huyện Ba Vì",
+      "Huyện Chương Mỹ",
+      "Huyện Đan Phượng",
+      "Huyện Đông Anh",
+      "Huyên Gia Lâm",
+      "Huyện Hoài Đức",
+      "Huyện Mê Linh"
     ];
     var ward_list = [
         // 0  quan 1
@@ -261,7 +326,7 @@ export default class Shippingaddress extends Component {
                   placeholder="Nhập họ và tên"
                   
                   className="Input-sc-17i9bto-0 girQwT"
-                  defaultValue={this.state.info.firstName}
+                  value={this.state.info.firstName}
                   onChange={(e) =>
                     this.setState({
                       info: { ...this.state.info, firstName: e.target.value },
@@ -283,7 +348,7 @@ export default class Shippingaddress extends Component {
                   placeholder="Nhập họ và tên"
                  
                   className="Input-sc-17i9bto-0 girQwT"
-                  defaultValue={this.state.info.lastName}
+                  value={this.state.info.lastName}
                   onChange={(e) =>
                     this.setState({
                       info: { ...this.state.info, lastName: e.target.value },
@@ -303,7 +368,7 @@ export default class Shippingaddress extends Component {
                   name="company"
                   placeholder="Nhập công ty"
                   className="Input-sc-17i9bto-0 girQwT"
-                  defaultValue={this.state.info.firm}
+                  value={this.state.info.firm}
                   onChange={(e) =>
                     this.setState({
                       info: { ...this.state.info, firm: e.target.value },
@@ -324,7 +389,7 @@ export default class Shippingaddress extends Component {
                   name="telephone"
                   placeholder="Nhập số điện thoại"
                   className="Input-sc-17i9bto-0 girQwT"
-                  defaultValue={this.state.info.phoneNumber}
+                  value={this.state.info.phoneNumber}
                   onChange={(e) =>
                     this.setState({
                       info: { ...this.state.info, phoneNumber: e.target.value },
@@ -346,7 +411,7 @@ export default class Shippingaddress extends Component {
                   name="email"
                   placeholder="Nhập email"
                   className="Input-sc-17i9bto-0 girQwT"
-                  defaultValue={this.state.user.email}
+                  value={this.state.user.email}
                 />
               </div>
             </div>
@@ -355,15 +420,16 @@ export default class Shippingaddress extends Component {
               <label for="region" className="input-label">
                 Tỉnh/Thành phố:
               </label>
-              <select required  onChange={(e) =>
-                    this.setState({
-                      info: { ...this.state.info, region: e.target.value },
-                    })
+              <select  onChange={(e) =>
+                    // this.setState({
+                    //   info: { ...this.state.info, region: e.target.value },
+                    // })
+                    this.Region(e)
                   }>
                 {this.state.info.region === "" ? (
-                  <option value="">Chọn Tỉnh/Thành phố</option>
+                  <option value="" selected disabled hidden>Chọn Tỉnh/Thành phố</option>
                 ) : (
-                  <option defaultValue={this.state.info.region}>
+                  <option selected value={this.state.info.region}>
                     {this.state.info.region}
                   </option>
                 )}
@@ -371,7 +437,7 @@ export default class Shippingaddress extends Component {
                   if (this.state.info.region === region) {
                     return <></>;
                   }
-                  return <option defaultValue={region}>{region}</option>;
+                  return <option value={region}>{region}</option>;
                 })}
               </select>
             </div>
@@ -380,38 +446,40 @@ export default class Shippingaddress extends Component {
               <label for="district" className="input-label">
                 Quận huyện:
               </label>
-              <select required  onChange={(e) =>
-                    this.setState({
-                      info: { ...this.state.info, district: e.target.value },
-                    })
-                  }>
-                {this.state.info.region === "" ? (
-                  <option value="">Chọn Quận/Huyện</option>
+               <select required onChange={(e) =>this.Distric(e)}>
+                  {/* <select>
+                  <option value="" selected disabled hidden>Choose here</option>
+                  <option>1</option>
+                  <option >2</option>
+                  <option>3</option>
+                  <option>4</option> */}
+                 {this.state.info.district === "" ? (
+                  <option value="" selected disabled hidden>Chọn Quận/Huyện</option>
                 ) : (
-                  <option defaultValue={this.state.info.district}>
+                  <option selected="selected" value={this.state.info.district}>
                     {this.state.info.district}
                   </option>
-                )}
-                {district_list.map((district, index) => {
+                )} 
+                 {district_list.map((district, index) => {
                   if (this.state.info.district === district) {
                     return <></>;
                   }
                   if (this.state.info.region === "Hồ Chí Minh") {
-                    return <option defaultValue={district}>{district}</option>;
+                    if(index >23){
+                      return <></>
+                    }
+                    return <option value={district}>{district}</option>;
                   } else {
-                    return (
-                      <>
-                        <option value="Quận 1">Huyện Bù Đăng</option>
-                        <option value="Quận 2">Huyện Bù Na</option>
-                        <option value="Quận 3">Huyện Bù Đốp</option>
-                        <option value="Quận 4">Huyện Đồng Xoài</option>
-                        <option value="Quận 5">Huyện Phước Long</option>
-                        <option value="Quận 6">Huyện Bù Gia Mập</option>
-                        
-                      </>
-                    );
+                   
+                      if(index >23){
+                        return <option value={district}>{district}</option>;
+                      }
+                      else{
+                        return <></>
+                      }
+                   
                   }
-                })}
+                })} 
               </select>
             </div>
             
@@ -419,15 +487,11 @@ export default class Shippingaddress extends Component {
               <label for="ward" className="input-label">
                 Phường xã:
               </label>
-              <select required  onChange={(e) =>
-                    this.setState({
-                      info: { ...this.state.info, wards: e.target.value },
-                    })
-                  }>
-                {this.state.info.region === "" ? (
-                    <option value="">Chọn Phường/Xã</option>
+              <select required onChange={(e) =>this.Wards(e)} >
+                {this.state.info.wards === "" ? (
+                    <option value="" selected disabled hidden>Chọn Phường/Xã</option>
                 ) : (
-                  <option defaultValue={this.state.info.wards}>
+                  <option selected="selected" value={this.state.info.wards}>
                     {this.state.info.wards}
                   </option>
                 )}
@@ -477,7 +541,7 @@ export default class Shippingaddress extends Component {
                 name="street"
                 rows="5"
                 placeholder="Nhập địa chỉ"
-                defaultValue={this.state.info.street}
+                value={this.state.info.street}
                 onChange={(e) =>
                     this.setState({
                       info: { ...this.state.info, street: e.target.value },
@@ -491,6 +555,11 @@ export default class Shippingaddress extends Component {
               <button type="submit" className="btn-submit">
                 Giao tới địa chỉ này
               </button>
+              <Link to="/shopping-cart">
+              <button type="submit" className="btn-submit" style={{marginLeft:50 +'px',backgroundColor:"blue",color:"#fff"}}>
+                Quay Lại
+              </button>
+              </Link>
             </div>
            
           </form>
