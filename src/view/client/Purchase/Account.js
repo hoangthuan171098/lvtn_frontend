@@ -339,9 +339,12 @@ class Account extends Component {
                     this.setState({
                       info: { ...this.state.info, region: e.target.value },
                     })
+                    
                   }
+                  value="hêlo"
                 >
-                  {this.state.info.region === "" ? (
+                
+                  {/* {this.state.info.region === "" ? (
                     <option value="">Chọn Tỉnh/Thành phố</option>
                   ) : (
                     <option defaultValue={this.state.info.region}>
@@ -353,7 +356,7 @@ class Account extends Component {
                       return <></>;
                     }
                     return <option defaultValue={region}>{region}</option>;
-                  })}
+                  })} */}
                 </select>
               </div>
 

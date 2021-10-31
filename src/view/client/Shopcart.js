@@ -39,7 +39,7 @@ class Shopcart extends Component {
           }
         })
         .then(response =>{
-          alert('Da dat hang thanh cong');
+         
           // Cookie.remove('cart')
           window.location.href="/location"
         })
@@ -49,16 +49,25 @@ class Shopcart extends Component {
   }
   updateMeterClick = (event,index) =>{
     let productList = this.state.productList
-    productList[index].quantity_m = Number(event.target.value)
-    if(Number(event.target.value) === 0){
-        toast.error('loi');
-        return;
+    if(event.target.value<= 0 ||  event.target.value %1 !==0 ){
+
+      toast.error("Số mét không hợp lệ!");
+      event.target.value = productList[index].quantity_m;
+      return;
     }
+    productList[index].quantity_m = Number(event.target.value)
+    
     this.setState({productList:productList})
     Cookie.set('cart',JSON.stringify(productList))
   }
   updateProductClick = (event,index) =>{
     let productList = this.state.productList
+    if(event.target.value<= 0 ||  event.target.value %1 !==0){
+
+      toast.error("Số cuộn không hợp lệ!");
+      event.target.value = productList[index].quantity;
+      return;
+    }
     productList[index].quantity = Number(event.target.value)
     this.setState({productList:productList})
     Cookie.set('cart',JSON.stringify(productList))
@@ -72,12 +81,7 @@ class Shopcart extends Component {
     console.log(this.state.productList)
     Cookie.set('cart',JSON.stringify(productList))
   }
-  onBlurQuantity = (e) =>{
-    if(e.target.value <= 0){
-      toast.error("loi")
-      return;
-    }
-  }
+  
   render() {
     var total =0;
    
@@ -87,12 +91,12 @@ class Shopcart extends Component {
           <table className="table">
             <thead>
               <tr>
-                <th>Tên sản phẩm</th>
-                <th className="text-center">Số Cuộn</th>
-                <th className="text-center">Số Mét</th>
-                <th className="text-center">Giá</th>
-                <th className="text-center">Tổng</th>
-                <th className="text-center">
+                <th style={{borderWidth:0 + 'px' }}>Tên sản phẩm</th>
+                <th style={{borderWidth:0 + 'px' }} className="text-center">Số Cuộn</th>
+                <th style={{borderWidth:0 + 'px' }} className="text-center">Số Mét</th>
+                <th style={{borderWidth:0 + 'px' }} className="text-center">Giá</th>
+                <th style={{borderWidth:0 + 'px' }} className="text-center">Tổng</th>
+                <th style={{borderWidth:0 + 'px' }} className="text-center">
                   <a className="btn btn-sm btn-outline-danger" href="!#">
                     Xóa giỏ hàng
                   </a>
@@ -125,17 +129,17 @@ class Shopcart extends Component {
                     </td>
                     <td className="text-center">
                       <div className="count-input" >
-                        <input type="text" style={{ width: 110 + "px", textAlign:"center"}} pattern="[1-9][0-9]*" defaultValue={(item.quantity).toLocaleString('en')}
-                          onChange = {(e) =>this.updateProductClick(e,index)}
-                          onBlur = {(e) =>this.onBlurQuantity(e)}
+                        <input type="number" style={{ width: 110 + "px", textAlign:"center"}} pattern="[1-9][0-9]*" defaultValue={(item.quantity).toLocaleString('en')}
+                          onBlur = {(e) =>this.updateProductClick(e,index)}
+                          
                          />
                       </div>
                     </td>
                     <td className="text-center">
                       <div className="count-input">
                       
-                        <input type="text" style={{ width: 110 + "px", textAlign:"center"}} defaultValue={(item.quantity_m*1).toLocaleString('en')}
-                           onChange = {(e) =>this.updateMeterClick(e,index)}
+                        <input type="number" style={{ width: 110 + "px", textAlign:"center"}} defaultValue={(item.quantity_m*1).toLocaleString('en')}
+                           onBlur = {(e) =>this.updateMeterClick(e,index)}
                          />
                         
                       </div>
@@ -164,7 +168,7 @@ class Shopcart extends Component {
         </div>
         <div className="shopping-cart-footer">
           <div className="column">
-            <form className="coupon-form" method="post">
+            <form className="coupon-form" >
               <input
                 className="form-control form-control-sm"
                 type="text"
@@ -186,10 +190,10 @@ class Shopcart extends Component {
         </div>
         <div className="shopping-cart-footer">
           <div className="column">
-            <a className="btn btn-outline-secondary" href="!#">
+            <Link to="/products" className="btn btn-outline-secondary" >
               <i className="icon-arrow-left" />
               &nbsp;Back to Shopping
-            </a>
+            </Link>
           </div>
           <div className="column">
             <a

@@ -20,11 +20,32 @@ class ProductDetailItem extends Component {
     };
   }
   handleMeter = (e) => {
+    // if( this.state.quantity_m === "" ){
+    //   toast.error("Vui lòng nhập số Mét!");
+     
+    //   return;
+    // }
+   
+    // if(this.state.quantity_m <= 0 || this.state.quantity_m %1 !==0){
+    //   toast.error("Số mét không hợp lệ!");
+    //   e.target.value=""
+    //   return;
+    // }
     this.setState({
       quantity_m: Number(e.target.value),
     });
   };
   handleQuantity = (e) => {
+    // if (this.state.quantity ==="" ) {
+    //   toast.error("Vui lòng nhập số Cuộn!");
+      
+    //   return;
+    // }
+    // if( this.state.quantity <= 0 ||  this.state.quantity % 1 !==0  ){
+    //   toast.error("Số cuộn không hợp lệ!");
+    //   e.target.value=""
+    //   return;
+    // }
     this.setState({
       quantity: Number(e.target.value),
     });
@@ -35,6 +56,7 @@ class ProductDetailItem extends Component {
     });
   };
   handlenote = (e) => {
+
     this.setState({
       note: e.target.value,
     });
@@ -42,8 +64,14 @@ class ProductDetailItem extends Component {
 
   addtocart = () => {
     var { productdetail } = this.props;
+    
     if (this.state.quantity ==="" ) {
       toast.error("Vui lòng nhập số Cuộn!");
+     
+      return;
+    }
+    if( this.state.quantity <= 0 ||  this.state.quantity % 1 !==0  ){
+      toast.error("Số cuộn không hợp lệ!");
      
       return;
     }
@@ -52,12 +80,10 @@ class ProductDetailItem extends Component {
      
       return;
     }
-    if( this.state.quantity === 0 ){
-      toast.error("Số cuộn không được bằng 0!");
-      return;
-    }
-    if(this.state.quantity_m === 0){
-      toast.error("Số mét không được bằng 0!");
+   
+    if(this.state.quantity_m <= 0 || this.state.quantity_m %1 !==0){
+      toast.error("Số mét không hợp lệ!");
+     
       return;
     }
     if(this.state.color ===""){
@@ -82,13 +108,27 @@ class ProductDetailItem extends Component {
       quantity_m: this.state.quantity_m,
     };
     let itemList = Cookie.get("cart");
-    if (typeof itemList === "string" && itemList !== undefined) {
-      console.log("a");
-      let list = JSON.parse(itemList);
-      let newlist = [...list, item];
-      Cookie.set("cart", JSON.stringify(newlist));
-    } else {
-      Cookie.set("cart", JSON.stringify([item]));
+    if(typeof(itemList)=== "string" && itemList !==undefined){
+      
+      let list = JSON.parse(itemList)
+     console.log(list) 
+      list.map((productitem,index)=>{
+        if(productitem.product.id === productdetail.id && productitem.color === item.color){
+            productitem.quantity += item.quantity
+            productitem.quantity_m += item.quantity_m
+            Cookie.set('cart',JSON.stringify(list))
+            return
+        }
+        else{
+          let newlist = [...list,item]
+          Cookie.set('cart',JSON.stringify(newlist))
+        }
+        
+      })
+      
+    }
+    else{
+      Cookie.set('cart',JSON.stringify([item]))
     }
     toast.success("Bạn đã thêm thành công sản phẩm vào giỏ hàng!");
     
@@ -190,7 +230,7 @@ class ProductDetailItem extends Component {
                       <br />
                       <input
                         type="number"
-                        onChange={(e) => this.handleQuantity(e)}
+                        onBlur={(e) => this.handleQuantity(e)}
                       ></input>
                     </div>
                     <div className="col-md-6">
@@ -201,6 +241,11 @@ class ProductDetailItem extends Component {
                         name="color"
                         className="form-control"
                       >
+                      {this.state.color === "" ? 
+                        <option value="" selected disabled hidden>-- Chọn Màu --</option>
+                        :
+                        <option value={this.state.color} selected disabled hidden>{this.state.color}</option>
+                      }
                         {productdetail.colors.map((item, index) => {
                           return <option value={item}>{item}</option>
                         })}
@@ -214,7 +259,7 @@ class ProductDetailItem extends Component {
                         <br />
                         <input
                           type="number"
-                          onChange={(e) => this.handleMeter(e)}
+                          onBlur={(e) => this.handleMeter(e)}
                         ></input>
                       </div>
                     </div>
