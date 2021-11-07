@@ -12,7 +12,6 @@ class ShipmentInfo extends Component {
 
 		this.state = {
 			loading: true,
-			authenticate: true,
 			shipment: {},
 			openModal: false,
 			shipper: '',
@@ -21,34 +20,30 @@ class ShipmentInfo extends Component {
 	}
 
 	async componentDidMount() {
-		if(Cookie.get('role') === 'Admin'){   
-			axios
-				.get(process.env.REACT_APP_BACKEND_URL + "/users",{
-					headers:{
-						'Authorization' : 'bearer ' + Cookie.get('token')
-					}
-				})
-				.then(res=>{
-					this.setState({users:res.data})
-				})
-				.catch(err=>{
-					alert('Cannot connect to server!!!!')
-					console.log(err.response)
-				})
-			let response = await fetch(process.env.REACT_APP_BACKEND_URL + "/shipments/" + this.props.match.params.id,{
-				headers: {
-					'Authorization':'bearer '+ Cookie.get('token'),
-				},
-			});
-			if (!response.ok) {
-				console.log('Cannot connect to sever!!!')
-				return
-			}
-			let data = await response.json();
-			this.setState({ loading: false,authenticate: true, shipment: data });
+		axios
+			.get(process.env.REACT_APP_BACKEND_URL + "/users",{
+				headers:{
+					'Authorization' : 'bearer ' + Cookie.get('token')
+				}
+			})
+			.then(res=>{
+				this.setState({users:res.data})
+			})
+			.catch(err=>{
+				alert('Cannot connect to server!!!!')
+				console.log(err.response)
+			})
+		let response = await fetch(process.env.REACT_APP_BACKEND_URL + "/shipments/" + this.props.match.params.id,{
+			headers: {
+				'Authorization':'bearer '+ Cookie.get('token'),
+			},
+		});
+		if (!response.ok) {
+			console.log('Cannot connect to sever!!!')
 			return
 		}
-		this.setState({authenticate: false});
+		let data = await response.json();
+		this.setState({ loading: false, shipment: data });
 	}
 
 	openModal = () =>{
@@ -262,12 +257,12 @@ class ShipmentInfo extends Component {
 					<div className='row'>
 						<button onClick={this.deliverClick}
 							className={this.state.shipment.status === 'waiting to deliver'?
-								'btn btn-primary mr-4':'btn btn-primary mr-4 d-none'}
+								'btn btn-info mr-4':'btn btn-info mr-4 d-none'}
 						>Giao hàng</button>
 						
 						<button onClick={this.doneClick}
 							className={this.state.shipment.status === 'delivering'?
-								'btn btn-primary mr-4':'btn btn-primary mr-4 d-none'}
+								'btn btn-info mr-4':'btn btn-info mr-4 d-none'}
 						>Hoàn thành</button>
 						<button className='btn btn-success' onClick={this.backClick}>Trở lại</button>
 					</div>
@@ -368,10 +363,6 @@ class ShipmentInfo extends Component {
 				</Modal>
         </div>
       )
-    }
-
-    if(!this.state.authenticate){
-      return <h2>You need to login</h2>
     }
     return (<h2>Waiting for API...</h2>);
   	}

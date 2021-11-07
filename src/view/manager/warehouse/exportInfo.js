@@ -30,6 +30,10 @@ export default class ExportInfo extends React.Component{
         
         this.setState({loading:false})
     }
+
+    backClick = () =>{
+		this.props.history.push('/manager/warehouse/')
+	}
     
     render(){
         if(!this.state.loading){
@@ -40,7 +44,8 @@ export default class ExportInfo extends React.Component{
                             <div className="row align-items-center">
                                 <div className="col-md-12 p-0">
                                     <div className="page-header-title">
-                                        <h5>EXPORT DETAIL</h5>
+                                        <h5>THÔNG TIN PHIẾU XUẤT</h5>
+                                        ID: {this.state.export.id}
                                     </div>
                                 </div>
                             </div>
@@ -48,6 +53,9 @@ export default class ExportInfo extends React.Component{
                     </div>
     
                     <div className="page-contain">
+                        <div className='w-100 d-flex flex-row-reverse' style={{marginBottom:10+'px'}}>
+                            <button onClick={this.backClick} className='btn btn-success mr-4'>Trở về</button>
+                        </div>
                         <div className='row'>
                             <div className='col-8'>
                                 <div className='card'>
@@ -56,8 +64,8 @@ export default class ExportInfo extends React.Component{
                                             <table className="table">
                                                 <thead className="brand-blue">
                                                     <tr>
-                                                        <th>Name</th>
-                                                        <th>Quantity</th>
+                                                        <th>Tên</th>
+                                                        <th>Số lượng</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -74,9 +82,9 @@ export default class ExportInfo extends React.Component{
                                                                                         {item1.color}
                                                                                     </td>
                                                                                     <td style={{border:'none',padding:0,width:25+'%'}}>
-                                                                                        {item1.m? item1.m:0}
+                                                                                        {item1.m? item1.m:0} (Mét)
                                                                                     </td>
-                                                                                    <td style={{border:'none',padding:0,width:25+'%'}}>{item1.roll? item1.roll:0}</td>
+                                                                                    <td style={{border:'none',padding:0,width:25+'%'}}>{item1.roll? item1.roll:0} (Cuộn)</td>
                                                                                 </tr>
                                                                             )
                                                                         })}

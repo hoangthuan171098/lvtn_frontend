@@ -9,16 +9,16 @@ class OrderUpdate extends Component {
 
     this.state = {
       loading: true,
-      authenticate: true,
       products: [],
       users: [],
-      buyingItem:{color:'RED',quantity:'',quantity_m:''},
+      buyingItem:{color:'',quantity:'',quantity_m:''},
       order: {
         productList: []
       },
       modal: {
         isOpen: false
       },
+      edit: [],
       userFilter: '',
       productFilter:{
         id: '',
@@ -30,63 +30,59 @@ class OrderUpdate extends Component {
   }
 
   async componentDidMount() {
-    if(Cookie.get('role') === 'Admin'){     
-      let response = await fetch(process.env.REACT_APP_BACKEND_URL + "/orders/" + this.props.match.params.id,{
-        headers: {
-          'Authorization':'bearer '+ Cookie.get('token'),
-        },
-      });
-      if (!response.ok) {
-        return
-      }
-
-      axios
-        .get(process.env.REACT_APP_BACKEND_URL + "/product-categories",{
-          headers:{
-            'Authorization' : 'bearer ' + Cookie.get('token')
-          }
-        })
-        .then(res=>{
-          this.setState({productCategories:res.data})
-        })
-        .catch(err=>{
-          alert('Cannot connect to server!!!!')
-          console.log(err.response)
-        })
-
-      axios
-        .get(process.env.REACT_APP_BACKEND_URL + "/users",{
-          headers:{
-            'Authorization' : 'bearer ' + Cookie.get('token')
-          }
-        })
-        .then(res=>{
-          this.setState({users:res.data})
-        })
-        .catch(err=>{
-          alert('Cannot connect to server!!!!')
-          console.log(err.response)
-        })
-
-      await axios
-        .get(process.env.REACT_APP_BACKEND_URL + '/products',{
-          headers:{
-            'Authorization' : 'bearer ' + Cookie.get('token')
-          }
-        })
-        .then(res=>{
-          this.setState({products:res.data})
-        })
-        .catch(err=>{
-          alert('Cannot connect to server!!!!')
-          console.log(err.response)
-        })
-
-      let data = await response.json();
-      this.setState({ loading: false, authenticate: true, order: data});
+    let response = await fetch(process.env.REACT_APP_BACKEND_URL + "/orders/" + this.props.match.params.id,{
+      headers: {
+        'Authorization':'bearer '+ Cookie.get('token'),
+      },
+    });
+    if (!response.ok) {
       return
     }
-    this.setState({authenticate: false});
+    let data = await response.json();
+
+    axios
+      .get(process.env.REACT_APP_BACKEND_URL + "/product-categories",{
+        headers:{
+          'Authorization' : 'bearer ' + Cookie.get('token')
+        }
+      })
+      .then(res=>{
+        this.setState({productCategories:res.data})
+      })
+      .catch(err=>{
+        alert('Cannot connect to server!!!!')
+        console.log(err.response)
+      })
+
+    axios
+      .get(process.env.REACT_APP_BACKEND_URL + "/users",{
+        headers:{
+          'Authorization' : 'bearer ' + Cookie.get('token')
+        }
+      })
+      .then(res=>{
+        this.setState({users:res.data})
+      })
+      .catch(err=>{
+        alert('Cannot connect to server!!!!')
+        console.log(err.response)
+      })
+
+    await axios
+      .get(process.env.REACT_APP_BACKEND_URL + '/products',{
+        headers:{
+          'Authorization' : 'bearer ' + Cookie.get('token')
+        }
+      })
+      .then(res=>{
+        this.setState({products:res.data})
+      })
+      .catch(err=>{
+        alert('Cannot connect to server!!!!')
+        console.log(err.response)
+      })
+    this.setState({ loading: false, order: data});
+    return
   }
 
   updateOrderClick = (event) =>{
@@ -123,16 +119,19 @@ class OrderUpdate extends Component {
     }
     let newList = [...this.state.order.productList,item]
     this.setState({order:{...this.state.order,productList:newList}})
-    this.setState({buyingItem:{...this.state.buyingItem,color:'RED',quantity:'',quantity_m:''}})
+    this.setState({buyingItem:{...this.state.buyingItem,color:'',quantity:'',quantity_m:''}})
   }
 
   closeProductClick = (event) =>{
     event.preventDefault()
-    this.setState({buyingItem:{color:'RED',quantity:'',quantity_m:''}})
+    this.setState({buyingItem:{color:'',quantity:'',quantity_m:''}})
   }
 
   chooseProductClick = (product) =>{
-    this.setState({buyingItem:{...this.state.buyingItem,product: product}})
+    let newItem= this.state.buyingItem
+    newItem.product = product
+    newItem.color = product.colors[0]
+    this.setState({buyingItem:newItem})
     this.closeModal()
   }
 
@@ -141,6 +140,69 @@ class OrderUpdate extends Component {
     let productList = this.state.order.productList
     productList.splice(index,1)
     this.setState({order:{...this.state.order,productList:productList}})
+  }
+
+  editProductClick = async (event,index) =>{
+    event.preventDefault()
+    let colors = []
+    await axios
+      .get(process.env.REACT_APP_BACKEND_URL+"/products/" + this.state.order.productList[index].product.id,{
+        headers:{
+          'Authorization' : 'bearer ' + Cookie.get('token')
+        }
+      })
+      .then(res=>{
+        colors = res.data.colors
+      })
+      .catch(()=>{
+        alert('cannot connect to server!!!')
+      })
+    let editList = this.state.edit
+    editList[index] = {
+      show:true,
+      colors: colors,
+      color: this.state.order.productList[index].color,
+      m: this.state.order.productList[index].quantity_m? this.state.order.productList[index].quantity_m: 0,
+      roll: this.state.order.productList[index].quantity? this.state.order.productList[index].quantity: 0
+    }
+    this.setState({edit:editList})
+  }
+
+  confirmEditProductClick = (event,index)=>{
+    event.preventDefault()
+    let editList = this.state.edit
+    let productList = this.state.order.productList
+    productList[index] = {...productList[index],color:editList[index].color,quantity:editList[index].roll,quantity_m:editList[index].m}
+    delete editList[index]
+    this.setState({edit: editList})
+    this.setState({order:{...this.state.order,productList:productList}})
+  }
+
+  editColorChange = (value,index)=>{
+    let editList = this.state.edit
+    editList[index].color = value
+    this.setState({edit: editList})
+  }
+
+  editQuantityChange = (value,index)=>{
+    let editList = this.state.edit
+    editList[index].roll = Number(value) 
+    this.setState({edit: editList})
+  }
+
+  editQuantityMChange = (value,index)=>{
+    let editList = this.state.edit
+    editList[index].m = Number(value)
+    this.setState({edit: editList})
+  }
+
+  cancleEditProductClick = (event,index) =>{
+    event.preventDefault()
+    let editList = this.state.edit
+    if(editList[index]){
+      delete editList[index]
+    }
+    this.setState({edit:editList})
   }
 
   openModal = () =>{
@@ -154,6 +216,22 @@ class OrderUpdate extends Component {
   backClick = (e) =>{
     e.preventDefault()
     this.props.history.push('/manager/orders/' + this.state.order.id)
+  }
+
+  showColorsSelect = (index) =>{
+    
+    if(true){
+      return(
+        <select className='select-control' defaultValue={this.state.edit[index].color} 
+        onChange={(e)=>this.editColorChange(e.target.value,index)}>
+          {this.state.edit[index].colors.map((color,index)=>{
+            return( 
+              <option value={color} key={index}>{color}</option>
+            )
+          })}
+        </select>
+      )
+    }
   }
 
   render() {
@@ -176,10 +254,11 @@ class OrderUpdate extends Component {
                     <div className='float-left'>
                       <select onChange={e=>this.setState({buyingItem:{...this.state.buyingItem,color:e.target.value}})} 
                         value={this.state.buyingItem.color} className='short-input'>
-                        <option value='RED'>red</option>
-                        <option value='YELLOW'>yellow</option>
-                        <option value='BLUE'>blue</option>
-                        <option value='GREEN'>green</option>
+                        {this.state.buyingItem.product.colors.map((color,index)=>{
+                          return(
+                            <option value={color} key={index}>{color}</option>
+                          )
+                        })}
                       </select>
                     </div>
                   </div>
@@ -222,6 +301,7 @@ class OrderUpdate extends Component {
             isOpen={this.state.modal.isOpen}
             onRequestClose={this.closeModal}
             contentLabel="Select product"
+					  style={{content:{marginLeft:300+'px',marginTop: 50+'px'}}}
           >
             <div style={{marginBottom: 30+'px'}}>
                 <h2 className='pull-left'>Select product</h2>
@@ -321,19 +401,50 @@ class OrderUpdate extends Component {
                       <table className='table'>
                         <thead>
                           <tr>
-                            <th></th>
-                            <th>Tên</th>
-                            <th>Màu</th>
-                            <th>Mét</th>
-                            <th>Cuộn</th>
+                            <th style={{width: 150 + 'px'}}></th>
+                            <th style={{width: 200 + 'px'}}>Tên</th>
+                            <th style={{width: 150 + 'px'}}>Màu</th>
+                            <th style={{width: 200 + 'px'}}>Mét</th>
+                            <th style={{width: 200 + 'px'}}>Cuộn</th>
                             <th></th>
                           </tr>
                         </thead>
+
                         <tbody>
                         {this.state.order.productList.map((item,index)=>{
+                          if(this.state.edit[index]){
+                            return(
+                            <tr key={index}>
+                              <td style={{width: 150 + 'px'}}>
+                                <img className='img-preview' src={process.env.REACT_APP_BACKEND_URL + item.product.image.url}></img>
+                              </td>
+                              <td>{item.product.name}</td>
+                              <td>
+                                {this.showColorsSelect(index)}
+                              </td>
+                              <td>
+                                <input className='form-control' defaultValue={item.quantity_m? item.quantity_m:0} min={0}
+                                  onChange={(e)=>this.editQuantityMChange(e.target.value,index)}
+                                ></input>
+                              </td>
+                              <td>
+                                <input className='form-control' defaultValue={item.quantity? item.quantity:0} min={0}
+                                  onChange={(e)=>this.editQuantityChange(e.target.value,index)}
+                                ></input>
+                              </td>
+                              <td>
+                                <button className='hiden-btn' onClick={e=>this.confirmEditProductClick(e,index)}>
+                                  <i className='fa fa-check icon' style={{color:'green'}}></i>
+                                </button><button className='hiden-btn' onClick={e=>this.cancleEditProductClick(e,index)}>
+                                  <i className='fa fa-ban icon' style={{color:'black'}}></i>
+                                </button>
+                              </td>
+                            </tr>
+                            )
+                          }
                           return(
                             <tr key={index}>
-                              <td style={{width: 200 + 'px'}}>
+                              <td style={{width: 150 + 'px'}}>
                                 <img className='img-preview' src={process.env.REACT_APP_BACKEND_URL + item.product.image.url}></img>
                               </td>
                               <td>{item.product.name}</td>
@@ -345,6 +456,9 @@ class OrderUpdate extends Component {
                                 {item.quantity? item.quantity:0}
                               </td>
                               <td>
+                                <button className='hiden-btn' onClick={e=>this.editProductClick(e,index)}>
+                                  <i className='fa fa-edit icon' style={{color:'blue'}}></i>
+                                </button>
                                 <button className='hiden-btn' onClick={e=>this.removeProductClick(e,index)}>
                                   <i className='fa fa-trash icon' style={{color:'red'}}></i>
                                 </button>
@@ -369,9 +483,9 @@ class OrderUpdate extends Component {
 
                   <div className='row'>
                     <div className='col-2'>
-                      <button className='btn btn-primary' onClick={e=>this.updateOrderClick(e)}>Cập Nhật</button>
+                      <button className='btn btn-info' onClick={e=>this.updateOrderClick(e)}>Cập Nhật</button>
                     </div>
-                    <button className='btn btn-primary' onClick={e=>this.backClick(e)}>Trở về</button>
+                    <button className='btn btn-success' onClick={e=>this.backClick(e)}>Trở về</button>
                   </div>
                 </form>
               </div>
@@ -379,9 +493,6 @@ class OrderUpdate extends Component {
           </div>
         </div>
       )
-    }
-    if(!this.state.authenticate){
-      return <h2>You need to login</h2>
     }
     return (<h2>Waiting for API...</h2>);
   }

@@ -24,19 +24,19 @@ class SideBar extends Component{
                                 </li>
                                 <li class="nav-item">
                                     <Link to='/shipment'>
-                                        <i className="menu-icon icon-dashboard"></i>
+                                        <i className="menu-icon fa fa-dashboard"></i>
                                         Dashboard
                                     </Link>
                                 </li>
                                 <li class="nav-item">
                                     <Link to="#">
-                                        <i class="menu-icon icon-bullhorn"></i>
+                                        <i class="menu-icon fa fa-bullhorn"></i>
                                         Announts
                                     </Link>  
                                 </li>
                                 <li class="nav-item">
                                     <Link to="/shipment/list-shipments-orders">
-                                        <i class="menu-icon icon-inbox"></i>
+                                        <i class="menu-icon fa fa-inbox"></i>
                                         Shipments
                                     </Link>
                                 </li>

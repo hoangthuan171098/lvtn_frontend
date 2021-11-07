@@ -15,19 +15,30 @@ class OrderInfo extends Component {
 
 		this.state = {
 			loading: true,
-			authenticate: true,
 			order: {},
 			isPartial: false,
 			productList: [],
 			packList: [],
 			openModal: false,
-			shipment: null
+			earlyDone: {show:false,reason:''},
+			shipment: null,
+			warehouse: []
 		}
 	}
 
 	async componentDidMount() {
-		if(Cookie.get('role') === 'Admin'){     
-			let response = await fetch(process.env.REACT_APP_BACKEND_URL + "/orders/" + this.props.match.params.id,{
+		axios
+			.get(process.env.REACT_APP_BACKEND_URL + '/warehouses',
+			{
+				headers: {
+					'Authorization':'bearer '+ Cookie.get('token'),
+				}
+			})
+			.then(res => {
+				this.setState({warehouse: res.data})
+			})
+
+		let response = await fetch(process.env.REACT_APP_BACKEND_URL + "/orders/" + this.props.match.params.id,{
 			headers: {
 				'Authorization':'bearer '+ Cookie.get('token'),
 			},
@@ -38,16 +49,21 @@ class OrderInfo extends Component {
 		}
 		let data = await response.json();
 		this.setState({ 
-				loading: false,
-				authenticate: true,
-				order: data,
-				productList:data.productList,
-				packList:[],
-				isPartial: false
-			});
-			return
-		}
-		this.setState({authenticate: false});
+			loading: false,
+			order: data,
+			productList:data.productList,
+			packList:[],
+			isPartial: false
+		});
+		return
+	}
+
+	openDoneModal = () =>{
+		this.setState({earlyDone:{show:true,reason:''}})
+	}
+
+	closeDoneModal = () =>{
+		this.setState({earlyDone:{show:false,reason:''}})
 	}
 
 	openModal = () =>{
@@ -68,6 +84,13 @@ class OrderInfo extends Component {
 				},
 			})
 			.then(response => {
+				axios
+					.post(process.env.REACT_APP_BACKEND_URL + '/notifications/', {
+						title: 'Xác nhận đơn hàng',
+						content: 'Đơn hàng #' + this.state.order.id + ' đã được xác nhận.',
+						to: this.state.order.buyer.id,
+						isread: false
+					},{ headers: {'Authorization':'bearer '+ Cookie.get('token')}})
 				alert("confirmed order success!");
 				this.props.history.push('/manager/orders')
 			})
@@ -80,6 +103,92 @@ class OrderInfo extends Component {
 
 	packAllClick = async () =>{
 		let productList = this.state.order.productList
+		for(let i=0; i<productList.length; i++){
+			let item = productList[i]
+			if(item.quantity){
+				if(item.quantity>this.warehousequantity(item.product.name,item.color)){
+					alert("Sản phẩm "+item.product.name + ' tồn kho không đủ' )
+					return
+				}
+			}
+			if(item.quantity_m){
+				if(item.quantity_m>this.warehousequantityM(item.product.name,item.color)){
+					alert("Sản phẩm "+item.product.name + ' tồn kho không đủ' )
+					return
+				}
+			}
+		}
+
+		for(let i=0; i<productList.length; i++){
+			let item = productList[i]
+			if(item.quantity){
+				let newExist = this.state.warehouse.find(i=>i.product.name===item.product.name).quantity
+				let indexOfColor = newExist.findIndex(i=>i.color===item.color)
+				newExist[indexOfColor].roll = newExist[indexOfColor].roll - item.quantity
+
+				axios
+					.put(process.env.REACT_APP_BACKEND_URL + '/warehouses/' + this.state.warehouse.find(i=>i.product.name===item.product.name).id, {
+						quantity: newExist
+					},{
+						headers: {
+							'Authorization':'bearer '+ Cookie.get('token'),
+						},
+					})
+			}
+			if(item.quantity_m){
+				let newExist = this.state.warehouse.find(i=>i.product.name===item.product.name).quantity
+				let indexOfColor = newExist.findIndex(i=>i.color===item.color)
+				newExist[indexOfColor].m = newExist[indexOfColor].m - item.quantity_m
+
+				axios
+					.put(process.env.REACT_APP_BACKEND_URL + '/warehouses/' + this.state.warehouse.find(i=>i.product.name===item.product.name).id, {
+						quantity: newExist
+					},{
+						headers: {
+							'Authorization':'bearer '+ Cookie.get('token'),
+						},
+					})
+			}
+		}
+
+		let exports = []
+		for(let i=0; i<productList.length; i++){
+			let item = productList[i]
+			let isExist = false
+			for(let j=0; j<exports.length; j++){
+				if(item.product.name === exports[j].product.name){
+					let quantity ={color:item.color}
+					if(item.quantity_m) quantity.m=item.quantity_m
+					if(item.quantity) quantity.roll=item.quantity
+					exports[j].quantity.push(quantity)
+					isExist = true
+					break
+				}
+			}
+			if(!isExist){
+				let quantity ={color:item.color}
+				if(item.quantity_m) quantity.m=item.quantity_m
+				if(item.quantity) quantity.roll=item.quantity
+				let data={
+					product: item.product,
+					quantity: [quantity]
+				}
+				exports.push(data)
+			}
+		}
+
+		axios
+			.post(process.env.REACT_APP_BACKEND_URL + '/exports', {
+				creator: Cookie.get('id'),
+				productList: exports
+			},{
+				headers: {
+					'Authorization':'bearer '+ Cookie.get('token'),
+				},
+			})
+			.catch(err=>{
+				alert('Cannot create export!')
+			})
 
 		await axios
 			.post(process.env.REACT_APP_BACKEND_URL + '/shipments', {
@@ -126,11 +235,42 @@ class OrderInfo extends Component {
 				},
 			})
 			.then(response => {
+				axios
+					.post(process.env.REACT_APP_BACKEND_URL + '/notifications/', {
+						title: 'Đơn hàng đã bị hủy',
+						content: 'Đơn hàng #' + this.state.order.id + ' đã bị hủy.',
+						to: this.state.order.buyer.id,
+						isread: false
+					},{ headers: {'Authorization':'bearer '+ Cookie.get('token')}})
 				alert("cancled order success!");
 				this.props.history.push('/manager/orders')
 			})
 			.catch(error => {
 				alert('An error occurred, please check again.');
+				console.log('An error occurred:', error.response);
+			});
+	}
+
+	confirmDoneClick = ()=>{
+		if(this.state.earlyDone.reason === ''){
+			alert('Xin hãy nhập lý do.')
+			return
+		}
+		axios
+			.put(process.env.REACT_APP_BACKEND_URL + '/orders/' + this.state.order.id, {
+				status: 'done',
+				doneReason: this.state.earlyDone.reason
+			},{
+				headers: {
+					'Authorization':'bearer '+ Cookie.get('token'),
+				},
+			})
+			.then(response => {
+				alert("Đơn hàng đã hoàn tất!")
+				this.props.history.push('/manager/orders')
+			})
+			.catch(error => {
+				alert('Đã xãy ra lỗi.');
 				console.log('An error occurred:', error.response);
 			});
 	}
@@ -142,6 +282,30 @@ class OrderInfo extends Component {
 	updateClick = (e) =>{
 		e.preventDefault()
 		this.props.history.push('/manager/orders/' + this.state.order.id + '/update')
+	}
+
+	warehousequantity = (name,color) =>{
+		let exist = this.state.warehouse.find(i=>i.product.name === name)
+		if(exist){
+			let quantity = exist.quantity.find(i=>i.color === color)
+			if(quantity) return quantity.roll
+			else return 0
+		}
+		else{
+			return 0
+		}
+	}
+
+	warehousequantityM = (name,color) =>{
+		let exist = this.state.warehouse.find(i=>i.product.name === name)
+		if(exist){
+			let quantity = exist.quantity.find(i=>i.color === color)
+			if(quantity) return quantity.m
+			else return 0
+		}
+		else{
+			return 0
+		}
 	}
 
 	showPackClick = ()=>{
@@ -179,7 +343,8 @@ class OrderInfo extends Component {
 							<th>Màu</th>
 							<th>Cuộn</th>
 							<th>Mét</th>
-							<th style={{width:250+'px'}} className={this.state.isPartial? '':'d-none'}></th>
+							<th style={{width:100+'px'}} className={this.state.isPartial? '':'d-none'}>Cuộn</th>
+							<th style={{width:100+'px'}} className={this.state.isPartial? '':'d-none'}>Mét</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -189,22 +354,18 @@ class OrderInfo extends Component {
 							<td><span>{item.product.name}</span></td>
 							<td>{item.color}</td>
 							<td>
-								{item.quantity? item.quantity:'0'}
+								{item.quantity? item.quantity:'0'}/{this.warehousequantity(item.product.name,item.color)}
 							</td>
 							<td>
-								{item.quantity_m? item.quantity_m:'0'}
+								{item.quantity_m? item.quantity_m:'0'}/{this.warehousequantityM(item.product.name,item.color)}
 							</td>
 							<td className={this.state.isPartial? '':'d-none'}>
-								CUỘN:
 								<input type='number' className='short-input mr-4'
-									min='0'
-									max={item.quantity? item.quantity.toString():'0'}
 									onChange={e=>{this.changePackQuantity(e,index)}}
 								></input>
-								Mét:
+							</td>
+							<td className={this.state.isPartial? '':'d-none'}>
 								<input type='number' className='short-input'
-									min='0'
-									max={item.quantity_m? item.quantity_m.toString():'0'}
 									onChange={e=>{this.changePackQuantityM(e,index)}}
 								></input>
 							</td>
@@ -225,6 +386,18 @@ class OrderInfo extends Component {
 				<div className='row'>
 					<span className='impress'>Ghi chú : </span>
 					{this.state.order.note}
+				</div>
+			)
+		}
+		return(<></>)
+	}
+
+	showReasonDone = () =>{
+		if(this.state.order.reasonDone && this.state.order.reasonDone!==""){
+			return(
+				<div className='row'>
+					<span className='impress'>Lý do hoàn tất: </span>
+					{this.state.order.reasonDone}
 				</div>
 			)
 		}
@@ -270,8 +443,9 @@ class OrderInfo extends Component {
 		if(status === 'waiting'){
 			return(
 				<div className='row'>
-					<button onClick={this.confirmClick} className='btn btn-primary mr-4'>Xác nhận</button>
+					<button onClick={this.confirmClick} className='btn btn-info mr-4'>Xác nhận</button>
 					<button onClick={this.cancleClick} className='btn btn-danger mr-4'>Hủy</button>
+					<button onClick={this.backClick} className='btn btn-success mr-4'>Trở về</button>
 				</div>
 			)
 		}
@@ -279,26 +453,44 @@ class OrderInfo extends Component {
 			return(
 				<div className='row'>
 					<button onClick={this.packAllClick}
-						className={!this.state.isPartial? 'btn btn-primary mr-4':'d-none'}
+						className={!this.state.isPartial? 'btn btn-info mr-4':'d-none'}
 					>Đóng gói hết</button>
 					<button onClick={this.showPackClick}
-						className={!this.state.isPartial? 'btn btn-primary mr-4':'d-none' }
+						className={!this.state.isPartial? 'btn btn-info mr-4':'d-none' }
 					>Chọn sản phẩm</button>
 					<button onClick={this.submitPackClick}
-						className={this.state.isPartial? 'btn btn-primary mr-4':'d-none'}
+						className={this.state.isPartial? 'btn btn-info mr-4':'d-none'}
 					>Xác nhận</button>
+					<button onClick={this.backClick} className='btn btn-success mr-4'>Trở về</button>
 				</div>
 			)
 		}
-		else if(status === 'partial delivered'||status === 'partial delivering'){
+		else if(status === 'partial delivering'){
 			return(
 				<div className='row'>
 					<button onClick={this.showPackClick}
-						className={!this.state.isPartial? 'btn btn-primary mr-4':'d-none' }
+						className={!this.state.isPartial? 'btn btn-info mr-4':'d-none' }
 					>Chọn sản phẩm</button>
 					<button onClick={this.submitPackClick}
-						className={this.state.isPartial? 'btn btn-primary mr-4':'d-none'}
+						className={this.state.isPartial? 'btn btn-info mr-4':'d-none'}
 					>Xác nhận</button>
+					<button onClick={this.backClick} className='btn btn-success mr-4'>Trở về</button>
+				</div>
+			)
+		}
+		else if(status === 'partial delivered'){
+			return(
+				<div className='row'>
+					<button onClick={this.openDoneModal}
+						className={!this.state.isPartial? 'btn btn-info mr-4':'d-none' }
+					>Hoàn tất</button>
+					<button onClick={this.showPackClick}
+						className={!this.state.isPartial? 'btn btn-info mr-4':'d-none' }
+					>Chọn sản phẩm</button>
+					<button onClick={this.submitPackClick}
+						className={this.state.isPartial? 'btn btn-info mr-4':'d-none'}
+					>Xác nhận</button>
+					<button onClick={this.backClick} className='btn btn-success mr-4'>Trở về</button>
 				</div>
 			)
 		}
@@ -307,17 +499,18 @@ class OrderInfo extends Component {
 				return(
 					<div className='row'>
 						<button onClick={this.showPackClick}
-							className={!this.state.isPartial? 'btn btn-primary mr-4':'d-none' }
+							className={!this.state.isPartial? 'btn btn-info mr-4':'d-none' }
 						>Chọn sản phẩm </button>
 						<button onClick={this.submitPackClick}
-							className={this.state.isPartial? 'btn btn-primary mr-4':'d-none'}
+							className={this.state.isPartial? 'btn btn-info mr-4':'d-none'}
 						>Xác nhận</button>
+						<button onClick={this.backClick} className='btn btn-success mr-4'>Trở về</button>
 					</div>
 				)
 			}
 		}
 		return(
-			<></>
+			<div className='row'><button onClick={this.backClick} className='btn btn-success mr-4'>Trở về</button></div>
 		)
 	}
 
@@ -336,7 +529,8 @@ class OrderInfo extends Component {
                             <div className="col-md-12 p-0">
                                 <div className="page-header-title">
                                     <h5>Thông tin đơn hàng 
-										<i className='fa fa-edit' style={{cursor:'pointer',color:'blue'}}
+										<i style={{cursor:'pointer',color:'blue'}}
+										className={this.state.order.status==='waiting'? 'fa fa-edit':'d-none'}
 										onClick={()=>{this.props.history.push("/manager/orders/"+this.state.order.id+"/update")}}
 										></i>
 									</h5>
@@ -358,6 +552,7 @@ class OrderInfo extends Component {
 						<div className='card'>
 							<div className='card-body'>
 								{this.showProductList()}
+								{this.showReasonDone()}
 								{this.showNote()}
 							</div>
 						</div>
@@ -412,17 +607,32 @@ class OrderInfo extends Component {
 				<Modal
 					isOpen={this.state.openModal}
 					onRequestClose={this.closeModal}
-					contentLabel="Select product"
+					contentLabel="Chọn sản phẩm"
 					ariaHideApp={false}
 					style={{content:{marginLeft:300+'px',marginTop: 50+'px'}}}
 				>
 					<UserInfo user={this.state.order.buyer} clickBack={this.closeModal}/>
 				</Modal>
+
+				<Modal
+					isOpen={this.state.earlyDone.show}
+					onRequestClose={this.closeDoneModal}
+					contentLabel="Lý do"
+					ariaHideApp={false}
+					style={{content:
+						{margin:'auto',width:500+'px',height:220+'px'}
+					}}
+				>
+					<div className='row'>
+						<label style={{fontSize:15+'px'}}>Lý do:</label>
+					</div>
+					<textarea style={{width:100+'%',marginBottom:10+'px'}} rows={5}
+						onChange={(e)=>this.setState({earlyDone:{...this.state.earlyDone,reason:e.target.value}})} />
+					<button className='btn btn-info mr-4' onClick={this.confirmDoneClick}>Xác nhận</button>
+					<button className='btn' style={{backgroundColor:'#e52d27',color:'white'}} onClick={this.closeDoneModal}>Hủy</button>
+				</Modal>
 			</div>
 		)
-    }
-    if(!this.state.authenticate){
-      return <h2>You need to login</h2>
     }
     return (<h2>Waiting for API...</h2>);
   }
@@ -457,10 +667,58 @@ class OrderInfo extends Component {
           color: productList[i].color
         }
         if(packList[i].quantity){
-          item ={...item,quantity:packList[i].quantity}
+			if(packList[i].quantity<0){
+				alert("Số lượng sản phẩm không được nhỏ hơn 0")
+				return
+			}
+			if(packList[i].quantity>this.state.productList.find(i=>i.product.name===item.product.name&i.color===item.color).quantity){
+				alert("Số lượng sản phẩm vượt quá số sản phẩm trong đơn hàng")
+				return
+			}
+			if(packList[i].quantity>this.warehousequantity(item.product.name,item.color)){
+				alert("Số lượng sản phẩm không được vượt quá tồn kho")
+				return
+			}
+			item ={...item,quantity:packList[i].quantity}
+			let newExist = this.state.warehouse.find(i=>i.product.name===item.product.name).quantity
+			let indexOfColor = newExist.findIndex(i=>i.color===item.color)
+			newExist[indexOfColor].roll = newExist[indexOfColor].roll - packList[i].quantity
+
+			axios
+				.put(process.env.REACT_APP_BACKEND_URL + '/warehouses/' + this.state.warehouse.find(i=>i.product.name===item.product.name).id, {
+					quantity: newExist
+				},{
+					headers: {
+						'Authorization':'bearer '+ Cookie.get('token'),
+					},
+				})
         }
         if(packList[i].quantity_m){
-          item ={...item,quantity_m:packList[i].quantity_m}
+			if(packList[i].quantity_m<0){
+				alert("Số lượng sản phẩm không được nhỏ hơn 0")
+				return
+			}
+			if(packList[i].quantity_m>this.state.productList.find(i=>i.product.name===item.product.name&i.color===item.color).quantity_m){
+				alert("Số lượng sản phẩm vượt quá số sản phẩm trong đơn hàng")
+				return
+			}
+			if(packList[i].quantity_m>this.warehousequantityM(item.product.name,item.color)){
+				alert("Số lượng sản phẩm không được vượt quá tồn kho")
+				return
+			}
+			item ={...item,quantity_m:packList[i].quantity_m}
+			let newExist = this.state.warehouse.find(i=>i.product.name===item.product.name).quantity
+			let indexOfColor = newExist.findIndex(i=>i.color===item.color)
+			newExist[indexOfColor].m -= packList[i].quantity_m
+
+			axios
+				.put(process.env.REACT_APP_BACKEND_URL + '/warehouses/' + this.state.warehouse.find(i=>i.product.name===item.product.name).id, {
+					quantity: newExist
+				},{
+					headers: {
+						'Authorization':'bearer '+ Cookie.get('token'),
+					},
+				})
         }
         newPackList.push(item)
 
@@ -528,6 +786,45 @@ class OrderInfo extends Component {
       theLast = false
     }
 
+	let exports = []
+	for(let i=0; i<newPackList.length; i++){
+		let item = newPackList[i]
+		let isExist = false
+		for(let j=0; j<exports.length; j++){
+			if(item.product.name === exports[j].product.name){
+				let quantity ={color:item.color}
+				if(item.quantity_m) quantity.m=item.quantity_m
+				if(item.quantity) quantity.roll=item.quantity
+				exports[j].quantity.push(quantity)
+				isExist = true
+				break
+			}
+		}
+		if(!isExist){
+			let quantity ={color:item.color}
+			if(item.quantity_m) quantity.m=item.quantity_m
+			if(item.quantity) quantity.roll=item.quantity
+			let data={
+				product: item.product,
+				quantity: [quantity]
+			}
+			exports.push(data)
+		}
+	}
+
+	axios
+		.post(process.env.REACT_APP_BACKEND_URL + '/exports', {
+			creator: Cookie.get('id'),
+			productList: exports
+		},{
+			headers: {
+				'Authorization':'bearer '+ Cookie.get('token'),
+			},
+		})
+		.catch(err=>{
+			alert('Cannot create export!')
+		})
+
 	await axios
 		.post(process.env.REACT_APP_BACKEND_URL + '/shipments', {
 			productList: newPackList,
@@ -572,7 +869,7 @@ class OrderInfo extends Component {
   changePackQuantity = (event,index) =>{
     let value= Number(event.target.value)
     let lst = this.state.packList
-    if(value===0){
+    if(value===0 || value <-1){
       if(!lst[index]){
         return
       }

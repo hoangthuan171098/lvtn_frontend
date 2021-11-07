@@ -142,7 +142,6 @@ export default class Export extends React.Component{
                     return
                 }
             }
-
         }
 
 		let newItem = {

@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
-import {Route, Switch, Redirect } from 'react-router-dom'
-import Cookie from 'js-cookie'
+import {Route, Switch } from 'react-router-dom'
 
 import SideBar from './components/SideBar'
 import Header from './components/Header'

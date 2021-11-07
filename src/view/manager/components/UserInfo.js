@@ -7,36 +7,31 @@ class AccountInfo extends Component {
 
 		this.state = {
 			loading: true,
-			authenticate: true,
 			user: {}
 		}
 	}
 
 	async componentDidMount() {
-		if(Cookie.get('role') === 'Admin'){     
-			let response1 = await fetch(process.env.REACT_APP_BACKEND_URL + "/users/" + this.props.user.id,{
-				headers: {
-					'Authorization':'bearer '+ Cookie.get('token'),
-				},
-			});
-			let response2 = await fetch(process.env.REACT_APP_BACKEND_URL + "/customer-infos?customerId=" + this.props.user.id ,{
-				headers: {
-					'Authorization':'bearer '+ Cookie.get('token'),
-				},
-			});
-			if (!response1.ok || !response2.ok) {
-				console.log("Không thể kết nối với sever!");
-				return
-			}
-			let data1 = await response1.json();
-			let data2 = await response2.json();
-			this.setState({ loading: false,authenticate: true, user: data1 });
-			if(data2.length !== 0){
-				this.setState({info: data2[0]});
-			}
+		let response1 = await fetch(process.env.REACT_APP_BACKEND_URL + "/users/" + this.props.user.id,{
+			headers: {
+				'Authorization':'bearer '+ Cookie.get('token'),
+			},
+		});
+		let response2 = await fetch(process.env.REACT_APP_BACKEND_URL + "/customer-infos?customerId=" + this.props.user.id ,{
+			headers: {
+				'Authorization':'bearer '+ Cookie.get('token'),
+			},
+		});
+		if (!response1.ok || !response2.ok) {
+			console.log("Không thể kết nối với sever!");
 			return
 		}
-		this.setState({authenticate: false});
+		let data1 = await response1.json();
+		let data2 = await response2.json();
+		this.setState({ loading: false, user: data1 });
+		if(data2.length !== 0){
+			this.setState({info: data2[0]});
+		}
 	}
 
 	detailInfo = () =>{
@@ -117,9 +112,6 @@ class AccountInfo extends Component {
 					</div>
 				</div>
 			)
-		}
-		if(!this.state.authenticate){
-			return <h2 className="ProductList-title">You need to login</h2>
 		}
 		return (<h2 className="ProductList-title">Waiting for API...</h2>);
 	}
