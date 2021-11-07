@@ -21,6 +21,7 @@ class Payment extends Component {
       show: false,
       loading: true,
       status_payment: "",
+      method:"",
       total: 0,
       note: "",
       orders: [],
@@ -114,6 +115,67 @@ class Payment extends Component {
     });
     return;
   }
+
+  handleClickQr = () =>{
+    var tempParams = {
+      to_email: this.state.user.email,
+      from_name: "SSS+ Shop",
+      to_name: `${this.state.info.firstName} ${this.state.info.lastName}`,
+      to_address: `${this.state.info.street},${this.state.info.wards},${this.state.info.district},${this.state.info.region}`,
+      list_product: `
+        ${this.state.productList.map((product) => {
+          return `
+            ${product.quantity} Cuộn x ${product.quantity_m} Mét - ${product.product.name} - Màu ${product.color}
+
+            `;
+        })}
+      `,
+    };
+    emailjs
+      .send(
+        "service_usji67r",
+        "template_fl6j2tu",
+        tempParams,
+        "user_P4FiW8xW41BqwLDdM7RSb"
+      )
+      .then(
+        function (response) {
+          console.log("SUCCESS!", response.status, response.text);
+        },
+        function (error) {
+          console.log("FAILED...", error);
+        }
+      );
+
+    axios
+      .post(
+        process.env.REACT_APP_BACKEND_URL + "/transections",
+        {
+          total: 2000,
+          status: this.state.status_payment,
+          address: `${this.state.info.street},${this.state.info.wards},${this.state.info.district},${this.state.info.region}`,
+          buyer: Cookie.get("id"),
+          note: this.state.note,
+          order: this.state.orders[this.state.orders.length - 1].id,
+        },
+        {
+          headers: {
+            Authorization: "bearer " + Cookie.get("token"),
+          },
+        }
+      )
+      .then((response) => {
+        
+        Cookie.remove("cart");
+        this.props.history.push("/purchase");
+        window.location.href = "/purchase";
+      })
+      .catch((err) => {});
+    toast.success("Thanh toán thành công!");
+    this.setState({show:false})
+   
+  }
+
   handleClick = () => {
     if (this.state.name_pay === "") {
       toast.error("Tên Chủ Thẻ Còn Trống!");
@@ -364,7 +426,7 @@ class Payment extends Component {
                       name="payment-methods"
                       value="cod"
                       onClick={() =>
-                        this.setState({ status_payment: "unpaid" })
+                        this.setState({ status_payment: "unpaid", method:"direct" })
                       }
                     />
                     <span className="radio-fake"></span>
@@ -394,7 +456,7 @@ class Payment extends Component {
                       name="payment-methods"
                       value="cod"
                       onClick={() =>
-                        this.setState({ status_payment: "paid" })
+                        this.setState({ status_payment: "paid" ,method:"momo"})
                       }
                     />
                     <span className="radio-fake"></span>
@@ -423,7 +485,7 @@ class Payment extends Component {
                       data-view-index="cod"
                       name="payment-methods"
                       value="cod"
-                      onClick={() => this.setState({ status_payment: "paid" })}
+                      onClick={() => this.setState({ status_payment: "paid" ,method:"zalo"})}
                     />
                     <span className="radio-fake"></span>
                     <span className="label">
@@ -451,7 +513,7 @@ class Payment extends Component {
                       data-view-index="cod"
                       name="payment-methods"
                       value="cod"
-                      onClick={() => this.setState({ status_payment: "paid" })}
+                      onClick={() => this.setState({ status_payment: "paid" ,method:"atm"})}
                     />
                     <span className="radio-fake"></span>
                     <span className="label">
@@ -479,7 +541,7 @@ class Payment extends Component {
                       data-view-index="cod"
                       name="payment-methods"
                       value="cod"
-                      onClick={(e) => this.setState({ status_payment: "debt" })}
+                      onClick={(e) => this.setState({ status_payment: "debt", method:"debt" })}
                     />
                     <span className="radio-fake"></span>
                     <span className="label">
@@ -605,7 +667,10 @@ class Payment extends Component {
                     <hr className="mt-0" />
                   </div>
                 </div>
-                <div className="form-group">
+                {(this.state.method === "atm")
+                  ?
+                  <>
+                  <div className="form-group">
                   {" "}
                   <label htmlFor="NAME" className="small text-muted mb-1">
                     TÊN CHỦ THẺ
@@ -683,6 +748,20 @@ class Payment extends Component {
                     </div>
                   </div>
                 </div>
+                  </>
+                  :
+
+                  <>
+
+                    <div>
+                      <img  
+                          onClick = {this.handleClickQr}
+                          style = {{cursor:"pointer"}}
+                          src="https://cdn.printgo.vn/uploads/media/790919/tao-ma-qr-code-san-pham-1_1620927223.jpg" alt="" />
+                    </div>
+                  </>
+                }
+                
                 {/* <div className="row mb-md-5">
                   <div className="col">
                     {" "}
@@ -700,12 +779,26 @@ class Payment extends Component {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.handleClick}>
+          {(this.state.method === "atm") 
+              ?
+              <>
+              <Button variant="secondary" onClick={this.handleClick}>
               Thanh Toán
             </Button>
             <Button variant="primary" onClick={this.handleClose}>
               Quay Lại
             </Button>
+              </>
+              :
+
+              <>
+                <span 
+                  style={{color:"blueviolet",cursor:"pointer"}}
+                  onClick={this.handleClose}
+                >Thanh toán bằng phương thức khác</span>
+              </>
+          }
+            
           </Modal.Footer>
         </Modal>
       </div>
