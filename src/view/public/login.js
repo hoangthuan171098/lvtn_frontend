@@ -48,7 +48,7 @@ class Login extends Component {
                 this.props.history.push('/admin')
             }
             else if(data.user.role.name === 'Manager'){
-                this.props.history.push('/manager')
+                this.props.history.push('/manager/orders')
             }else if(data.user.role.name === 'Shipper'){
                 this.props.history.push('/shipment')
             }

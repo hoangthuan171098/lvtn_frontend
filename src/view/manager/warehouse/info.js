@@ -66,6 +66,10 @@ export default class Info extends React.Component{
         
         this.setState({loading:false})
     }
+
+    backClick = () =>{
+		this.props.history.push('/manager/warehouse/')
+	}
     
     render(){
         if(!this.state.loading){
@@ -84,6 +88,9 @@ export default class Info extends React.Component{
                     </div>
     
                     <div className="page-contain">
+                        <div className='w-100 d-flex flex-row-reverse' style={{marginBottom:10+'px'}}>
+                            <button onClick={this.backClick} className='btn btn-success mr-4'>Trở về</button>
+                        </div>
                         <div className='row'>
                             <div className="col-sm-12 col-xl-8">
                                 <ul className="nav nav-tabs" id="myTab" role="tablist">
@@ -130,7 +137,9 @@ export default class Info extends React.Component{
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {this.state.imports.map((item,index)=>{
+                                                {this.state.imports
+                                                .sort((a,b)=>(new Date(b.updatedAt.slice(0,19)+'Z')) - (new Date(a.updatedAt.slice(0,19)+'Z')))
+                                                .map((item,index)=>{
                                                     let isHave = item.productList.map(i=>i.product.name).includes(this.state.product.product.name)
                                                     if(isHave){
                                                         let location = item.productList.map(i=>i.product.name).findIndex(i=>i===this.state.product.product.name)
@@ -168,7 +177,9 @@ export default class Info extends React.Component{
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {this.state.exports.map((item,index)=>{
+                                                {this.state.exports
+                                                .sort((a,b)=>(new Date(b.updatedAt.slice(0,19)+'Z')) - (new Date(a.updatedAt.slice(0,19)+'Z')))
+                                                .map((item,index)=>{
                                                     let isHave = item.productList.map(i=>i.product.name).includes(this.state.product.product.name)
                                                     if(isHave){
                                                         let location = item.productList.map(i=>i.product.name).findIndex(i=>i===this.state.product.product.name)
@@ -204,6 +215,7 @@ export default class Info extends React.Component{
                                     <div className="card-header">
                                         <h5>Thong tin</h5>
                                     </div>
+                        
                                     <div className="card-body  text-center">
                                         <div className="user-image">
                                             <img src={process.env.REACT_APP_BACKEND_URL+this.state.product.product.image.url} className="wid-100 m-auto" alt="product image"/>

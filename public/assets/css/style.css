@@ -413,7 +413,7 @@ input[type="password"]:focus,
 input[type="tel"]:focus,
 input[type="date"]:focus,
 textarea:focus {
-	border-color: #ff8e87;
+	/* border-color: #ff8e87; */
 	outline: none;
 }
 

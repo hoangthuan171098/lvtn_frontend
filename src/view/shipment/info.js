@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import Cookie from "js-cookie"
 import axios from 'axios'
-
-import Status from './components/status'
+import Modal from 'react-modal'
 
 class ShipmentInfo extends Component {
 	constructor(props) {
@@ -11,7 +10,9 @@ class ShipmentInfo extends Component {
 		this.state = {
 			loading: true,
 			authenticate: true,
-			shipment: {}
+			shipment: {},
+			images: [],
+			confirmModal: false
 		}
 	}
 
@@ -30,7 +31,6 @@ class ShipmentInfo extends Component {
 			this.setState({ loading: false,authenticate: true, shipment: data });
 			return
 		}
-		this.setState({authenticate: false});
 	}
 
   	deliverClick = async () =>{
@@ -59,6 +59,14 @@ class ShipmentInfo extends Component {
 						}
 					})
 					.then(res=>{
+						axios
+							.post(process.env.REACT_APP_BACKEND_URL + '/notifications/', {
+								title: 'Đơn hàng bắt đầu giao hàng',
+								content: 'Đơn hàng #' + this.state.shipment.orderID + ' đã bắt đầu giao hàng.',
+								to: this.state.shipment.buyer.id,
+								isread: false
+							},{ headers: {'Authorization':'bearer '+ Cookie.get('token')}})
+
 						alert("deliver product  success!");
 						this.props.history.push('/shipment')
 					})
@@ -85,6 +93,22 @@ class ShipmentInfo extends Component {
 				}
 			})
 			.then(async(res) => {
+				const formData = new FormData()
+				Array.from(this.state.images).forEach(image => {
+					formData.append('files', image)
+				});
+				formData.append('ref','shipment')
+				formData.append('refId',this.state.shipment.id)
+				formData.append('field','confirmImage')
+
+				axios
+					.post(`http://localhost:1337/upload`, formData, {
+						headers: { 'Content-Type': 'multipart/form-data','Authorization':'bearer '+ Cookie.get('token') },
+					})
+					.catch(err => {
+						console.log('Error : '+err.response)
+				})
+
 				let status
 				if(this.state.shipment.theLast){
 					status = 'delivered'
@@ -101,6 +125,13 @@ class ShipmentInfo extends Component {
 						}
 					})
 					.then(res=>{
+						axios
+							.post(process.env.REACT_APP_BACKEND_URL + '/notifications/', {
+								title: 'Đơn hàng đã giao hàng xong',
+								content: 'Đơn hàng #' + this.state.shipment.orderID + ' đã được giao hàng thành công.',
+								to: this.state.shipment.buyer.id,
+								isread: false
+							},{ headers: {'Authorization':'bearer '+ Cookie.get('token')}})
 						alert("deliver product  success!");
 						this.props.history.push('/shipment/list-shipments-orders/')
 					})
@@ -116,13 +147,42 @@ class ShipmentInfo extends Component {
 		return
 	}
 
+	showConfirmImage = () =>{
+		if(this.state.images[0]){
+			return(
+				<div className='row' style={{marginTop:5+'px'}}>
+					<img src={URL.createObjectURL(this.state.images[0])} 
+					alt='hinh xac nhan' style={{margin:'auto'}}/>
+				</div>
+			)
+		}
+	}
+
+	totalMoney = () =>{
+		let total=0
+		let list = this.state.shipment.productList
+		for(let i=0; i<list.length; i++){
+			let price = list[i].product.price
+			if(list[i].quantity) total+=list[i].quantity*price
+			if(list[i].quantity_m) total+=list[i].quantity_m*price
+		}
+		return total
+	}
+
+	openConfirmModal = () =>{
+		this.setState({confirmModal:true})
+	}
+
+	closeConfirmModal = () =>{
+		this.setState({confirmModal:false,images:[]})
+	}
+
 	backClick = () =>{
 		this.props.history.push('/shipment/list-shipments-orders/')
 	}
 
   	render() {
     if (!this.state.loading && Cookie.get('token')) {
-		var total =0
       return (
         <div>
             <div className="page-header">
@@ -146,7 +206,7 @@ class ShipmentInfo extends Component {
 								'btn btn-primary mr-4':'btn btn-primary mr-4 d-none'}
 						>Deliver</button>
 						
-						<button onClick={this.doneClick}
+						<button onClick={this.openConfirmModal}
 							className={this.state.shipment.status === 'delivering'?
 								'btn btn-primary mr-4':'btn btn-primary mr-4 d-none'}
 						>Done</button>
@@ -218,16 +278,36 @@ class ShipmentInfo extends Component {
 								<span>Tổng tiền:</span>
 							</div>
 							<div className='w-50'>
-							{this.state.shipment.productList.map((item,index)=>{
-								total += item.quantity*item.product.price
-							})}
-								<span>{total}đ</span><br/>
-								
+								<span>{this.totalMoney()}đ</span><br/>
 							</div>
 						</div>
 					</div>
 				</div>
-              </div>
+            </div>
+			
+			<Modal
+				isOpen={this.state.confirmModal}
+				onRequestClose={this.closeConfirmModal}
+				contentLabel="Xác nhận"
+				ariaHideApp={false}
+				style={{content:
+					{margin:'auto',width:500+'px',height:400+'px'}
+				}}
+			>
+				<div className='row'>
+					<label style={{fontSize:15+'px'}}>Xác nhận:</label>
+				</div>
+				
+				<div style={{marginBottom: 10+'px'}}>
+					<input type='file' onChange={e=>this.setState({images:e.target.files})}/>
+					{this.showConfirmImage()}
+				</div>
+				<div className='row'>
+					<button className='btn btn-info mr-4' onClick={this.doneClick}>Xác nhận</button>
+					<button className='btn' style={{backgroundColor:'#e52d27',color:'white'}} onClick={this.closeConfirmModal}>Hủy</button>
+				</div>
+			</Modal>
+
         </div>
 		
       )

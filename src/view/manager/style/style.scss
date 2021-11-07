@@ -6299,6 +6299,14 @@
     .custom-select,
     .form-control {
         background: #eff3f6;
+        border-radius: 0px !important;
+        padding: 10px 20px;
+        font-size: 14px;
+        height: auto;
+    }
+    .select-control{
+        background: #eff3f6;
+        border-radius: 0px !important;
         padding: 10px 20px;
         font-size: 14px;
         height: auto;

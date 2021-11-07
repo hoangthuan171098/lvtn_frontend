@@ -6,6 +6,7 @@ import ManagerOrder from './order'
 import ManagerShipment from './shipment'
 import ManagerChat from './chat'
 import ManagerWarehouse from './warehouse'
+import Profileuser from './components/Profileuser'
 
 import SideBar from './components/SideBar'
 import Header from './components/Header'
@@ -33,6 +34,7 @@ class Manager extends Component{
                         <Route path='/manager/shipments' component={ManagerShipment} />
                         <Route path='/manager/warehouse' component={ManagerWarehouse} />
                         <Route path='/manager/chat' component={ManagerChat} />
+                        <Route path='/manager/profile' component={Profileuser} />
                     </Switch>
                 </div>
             </div>

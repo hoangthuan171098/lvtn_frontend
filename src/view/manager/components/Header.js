@@ -2,7 +2,8 @@ import React from 'react'
 import { Link} from "react-router-dom"
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router'
-import Cookie from "js-cookie"
+import axios from 'axios'
+import Cookie from 'js-cookie'
 
 
 function mapStateToProps(state) {
@@ -22,6 +23,48 @@ function mapDispatchToProps(dispatch){
 }
 
 export default withRouter(connect(mapStateToProps,mapDispatchToProps)(class Header extends React.Component{
+	constructor(props){
+		super(props)
+		this.state={
+			notifications: []
+		}
+	}
+
+	async componentDidMount(){
+		this.getData()
+		this.myInterval = setInterval(() => this.getData(),4000)
+	}
+
+	componentWillUnmount(){
+		clearInterval(this.myInterval)
+	}
+
+	getData = async ()=>{
+		await axios
+            .get(process.env.REACT_APP_BACKEND_URL + '/notifications?to='+Cookie.get('id'),{
+                headers: {
+                    'Authorization':'bearer '+ Cookie.get('token'),
+                }
+            })
+            .then(res=>{
+                this.setState({notifications: res.data})
+            })
+	}
+
+	markAllClick = (event) =>{
+		event.preventDefault()
+		let list = this.state.notifications.filter(i=>!i.isread)
+		for(let i=0; i<list.length; i++){
+			console.log(i)
+			axios
+				.put(process.env.REACT_APP_BACKEND_URL + '/notifications/'+list[i].id,{
+					isread: true
+				},{
+					headers: {'Authorization':'bearer '+ Cookie.get('token')}
+				})
+		}
+		this.getData()
+	}
 
     logoutHandle = async (e) =>{
         e.preventDefault()
@@ -51,10 +94,10 @@ export default withRouter(connect(mapStateToProps,mapDispatchToProps)(class Head
 								<div className="input-group">
 									<input type="text" id="m-search" className="form-control" placeholder="Search . . ." />
 									<a href="#!" className="input-group-append search-close">
-										<i className="feather icon-x input-group-text" />
+										{/* <i className="fa fa-times input-group-text" /> */}
 									</a>
 									<span className="input-group-append search-btn btn btn-primary">
-										<i className="feather icon-search input-group-text" />
+										<i className="fa fa-search input-group-text" />
 									</span>
 								</div>
 							</div>
@@ -64,77 +107,30 @@ export default withRouter(connect(mapStateToProps,mapDispatchToProps)(class Head
 						<li>
 							<div className="dropdown">
 								<a className="dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded={false}>
-									<i className="icon feather icon-bell" />
+									<i className="icon fa fa-bell-o" />
 								</a>
 								<div className="dropdown-menu dropdown-menu-right notification">
 									<div className="noti-head">
 										<h6 className="d-inline-block m-b-0">Notifications</h6>
 										<div className="float-right">
-											<a href="#!" className="m-r-10">mark as read</a>
-											<a href="#!">clear all</a>
+											<a href='' className="m-r-10" onClick={(e)=>this.markAllClick(e)}>mark as read</a>
+											<a href=''>clear all</a>
 										</div>
 									</div>
 									<ul className="noti-body">
-										<li className="n-title">
-											<p className="m-b-0">NEW</p>
-										</li>
-										<li className="notification">
-											<div className="media">
-												<img className="img-radius" src="/assets/images/user/avatar-1.jpg" alt="Generic placeholder image" />
-												<div className="media-body">
-													<p><strong>John Doe</strong><span className="n-time text-muted"><i className="icon feather icon-clock m-r-10" />5 min</span></p>
-													<p>New ticket Added</p>
-												</div>
-											</div>
-										</li>
-										<li className="n-title">
-											<p className="m-b-0">EARLIER</p>
-										</li>
-										<li className="notification">
-											<div className="media">
-												<img className="img-radius" src="/assets/images/user/avatar-2.jpg" alt="Generic placeholder image" />
-												<div className="media-body">
-													<p><strong>Joseph William</strong><span className="n-time text-muted"><i className="icon feather icon-clock m-r-10" />10 min</span></p>
-													<p>Prchace New Theme and make payment</p>
-												</div>
-											</div>
-										</li>
-										<li className="notification">
-											<div className="media">
-												<img className="img-radius" src="/assets/images/user/avatar-3.jpg" alt="Generic placeholder image" />
-												<div className="media-body">
-													<p><strong>Sara Soudein</strong><span className="n-time text-muted"><i className="icon feather icon-clock m-r-10" />12 min</span></p>
-													<p>currently login</p>
-												</div>
-											</div>
-										</li>
-										<li className="notification">
-											<div className="media">
-												<img className="img-radius" src="/assets/images/user/avatar-1.jpg" alt="Generic placeholder image" />
-												<div className="media-body">
-													<p><strong>Joseph William</strong><span className="n-time text-muted"><i className="icon feather icon-clock m-r-10" />30 min</span></p>
-													<p>Prchace New Theme and make payment</p>
-												</div>
-											</div>
-										</li>
-										<li className="notification">
-											<div className="media">
-												<img className="img-radius" src="/assets/images/user/avatar-3.jpg" alt="Generic placeholder image" />
-												<div className="media-body">
-													<p><strong>Sara Soudein</strong><span className="n-time text-muted"><i className="icon feather icon-clock m-r-10" />1 hour</span></p>
-													<p>currently login</p>
-												</div>
-											</div>
-										</li>
-										<li className="notification">
-											<div className="media">
-												<img className="img-radius" src="/assets/images/user/avatar-1.jpg" alt="Generic placeholder image" />
-												<div className="media-body">
-													<p><strong>Joseph William</strong><span className="n-time text-muted"><i className="icon feather icon-clock m-r-10" />2 hour</span></p>
-													<p>Prchace New Theme and make payment</p>
-												</div>
-											</div>
-										</li>
+										{this.state.notifications.map((notification,index)=>{
+											return(
+												<li className={notification.isread? "notification":"notification gray-bg"}>
+													<div className="media">
+														<img className="img-radius" src="/assets/images/user/avatar-1.jpg" alt="Generic placeholder image" />
+														<div className="media-body">
+															<p><strong>{notification.title}</strong><span className="n-time text-muted"><i className="icon feather icon-clock m-r-10" />5 min</span></p>
+															<p>{notification.content}</p>
+														</div>
+													</div>
+												</li>
+											)
+										})}
 									</ul>
 									<div className="noti-footer">
 										<a href="#!">show all</a>
@@ -156,10 +152,10 @@ export default withRouter(connect(mapStateToProps,mapDispatchToProps)(class Head
 										</a>
 									</div>
 									<ul className="pro-body">
-										<li><Link to="/manager" className="dropdown-item"><i className="feather icon-settings" /> Manager</Link></li>
-										<li><Link to="/profile" className="dropdown-item"><i className="feather icon-user" /> Profile</Link></li>
-										<li><Link to="#" className="dropdown-item"><i className="feather icon-mail" /> My Messages</Link></li>
-										<li><Link to="#" className="dropdown-item"><i className="feather icon-lock" /> Lock Screen</Link></li>
+										<li><Link to="/manager" className="dropdown-item"><i className="fa fa-cog" style={{width:15+'px'}}/> Manager</Link></li>
+										<li><Link to="/profile" className="dropdown-item"><i className="fa fa-user" style={{width:15+'px'}}/> Profile</Link></li>
+										<li><Link to="#" className="dropdown-item"><i className="fa fa-envelope" style={{width:15+'px'}}/> My Messages</Link></li>
+										<li><Link to="#" className="dropdown-item"><i className="fa fa-lock" style={{width:15+'px'}}/> Lock Screen</Link></li>
 									</ul>
 								</div>
 							</div>

@@ -84,16 +84,16 @@ class ShipmentList extends Component{
                                         <td onClick={()=>this.infoClick(shipment.id)}>
                                             {shipment.productList.map((item,index)=>{
                                                 if(index === 2)
-                                                    return(<p key={index}>...</p>);
+                                                    return(<p key={index}>...</p>)
                                                 if(index === 3)
-                                                    return <></>;
+                                                    return <></>
                                                 return(
-                                                    <p key={index}>{item.product.name + ': '}{item.quantity_m ? 
+                                                    <p key={index}>{item.product.name+'-'+item.color+': '}{item.quantity_m ? 
                                                         (item.quantity? 
                                                           item.quantity_m + ' x m,' + item.quantity + ' x cuộn'
                                                           : item.quantity_m + ' x m')
                                                         :item.quantity + ' x cuộn'
-                                                      }
+                                                    }
                                                     </p>
                                                 )
                                             })}

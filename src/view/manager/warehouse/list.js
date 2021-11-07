@@ -92,7 +92,7 @@ class List extends Component{
                         <div className="row align-items-center">
                             <div className="col-md-12 p-0">
                                 <div className="page-header-title">
-                                    <h5>WAREHOUSE</h5>
+                                    <h5>KHO HÀNG</h5>
                                 </div>
                             </div>
                         </div>
@@ -100,39 +100,39 @@ class List extends Component{
                 </div>
                 
                 <div className='w-100 d-flex flex-row-reverse' style={{marginBottom:10+'px'}}>
-					<button onClick={this.importClick} className='btn btn-primary mr-4'>Nhập</button>
-					<button onClick={this.exportClick} className='btn btn-primary mr-4'>Xuất</button>
+					<button onClick={this.importClick} className='btn btn-info mr-4'>Nhập kho</button>
+					<button onClick={this.exportClick} className='btn btn-info mr-4'>Xuất kho</button>
                 </div>
 
                 <div className="col-sm-12">
                     <ul className="nav nav-tabs" id="myTab" role="tablist">
                         <li className="nav-item">
-                            <a className="nav-link active text-uppercase" id="have-tab" data-toggle="tab" href="#remain" role="tab" aria-controls="have" aria-selected="true">Ton kho</a>
+                            <a className="nav-link active text-uppercase" id="have-tab" data-toggle="tab" href="#remain" role="tab" aria-controls="have" aria-selected="true">TỒN KHO</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link text-uppercase" id="import-tab" data-toggle="tab" href="#import" role="tab" aria-controls="import" aria-selected="false">Phieu Nhap</a>
+                            <a className="nav-link text-uppercase" id="import-tab" data-toggle="tab" href="#import" role="tab" aria-controls="import" aria-selected="false">LỊCH SỬ NHẬP</a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link text-uppercase" id="export-tab" data-toggle="tab" href="#export" role="tab" aria-controls="export" aria-selected="false">Phieu Xuat</a>
+                            <a className="nav-link text-uppercase" id="export-tab" data-toggle="tab" href="#export" role="tab" aria-controls="export" aria-selected="false">LỊCH SỬ XUẤT</a>
                         </li>
                     </ul>
+
                     <div className="tab-content" id="myTabContent" style={{margin:0+'px'}}>
                         <div className="tab-pane fade show active" id="remain" role="tabpanel" aria-labelledby="have-tab">
-                            
                             <div className="btn-group mb-2 mr-2">
                                 <button type="button" className="btn btn-outline-success">Filter</button>
                                 <button type="button" className={!this.state.itemFilter.show? "btn btn-success":'d-none'}
                                     onClick={()=>this.setState({itemFilter:{...this.state.itemFilter,show:true}})}>
-                                    <span className="pcoded-micon"><i className="feather icon-chevron-down" /></span>
+                                    <span className="pcoded-micon d-flex align-items-center"><i className="fa fa-chevron-down" /></span>
                                 </button>
                                 <button type="button" className={this.state.itemFilter.show? "btn btn-success":'d-none'}
                                     onClick={()=>this.setState({itemFilter:{...this.state.itemFilter,show:false}})}>
-                                    <span className="pcoded-micon"><i className="feather icon-chevron-up" /></span>
+                                    <span className="pcoded-micon d-flex align-items-center"><i className="fa fa-chevron-up" /></span>
                                 </button>
                             </div>
 
-                            <div className={!this.state.itemFilter.show? "d-none" : "row" }>
 
+                            <div className={!this.state.itemFilter.show? "d-none" : "row" }>
                                 <div className='col-4'>
                                     <div className="input-group mb-3">
                                         <div className="input-group-prepend">
@@ -165,8 +165,8 @@ class List extends Component{
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>PRODUCT</th>
-                                        <th>quantity</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Số lượng</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -193,12 +193,12 @@ class List extends Component{
                                                             (quantity.roll? 
                                                                 quantity.m + ' x m,' + quantity.roll + ' x roll'
                                                             : quantity.m + ' x m')
-                                                            :quantity.roll + ' x roll'
+                                                            :quantity.roll + ' x cuộn'
                                                         }
                                                         </p>
                                                     )
                                                 })
-                                                :<p>Empty</p>}
+                                                :<p>Trống</p>}
                                             </td>
                                         </tr>
                                     )
@@ -211,9 +211,9 @@ class List extends Component{
                             <table className="table">
                                 <thead className="brand-blue">
                                     <tr>
-                                        <th>Creator</th>
-                                        <th>Time</th>
-                                        <th>ProductList</th>
+                                        <th>NGƯỜI tạo</th>
+                                        <th>Thời gian</th>
+                                        <th>Danh sách</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -222,7 +222,7 @@ class List extends Component{
                                     .map((item,index)=>{
                                         return(
                                             <tr key={index}
-                                            onClick={()=>this.props.history.push('warehouse/import/' + item.id)}>
+                                            onClick={()=>this.props.history.push('/manager/warehouse/import/' + item.id)}>
                                                 <td>{item.creator.username}</td>
                                                 <td>{item.createdAt.slice(0,10)+" "+item.createdAt.slice(11,19)}</td>
                                                 <td>
@@ -237,9 +237,9 @@ class List extends Component{
                                                             <p key={index1}>{item1.product.name + " :"}                                                  
                                                                 {totalM? 
                                                                 (totalRoll? 
-                                                                    totalM + ' x m,' + totalRoll + ' x roll'
+                                                                    totalM + ' x m,' + totalRoll + ' x cuộn'
                                                                     : totalM + ' x m')
-                                                                    :totalRoll + ' x roll'
+                                                                    :totalRoll + ' x cuộn'
                                                                 }
                                                             </p>
                                                         )
@@ -256,18 +256,19 @@ class List extends Component{
                             <table className="table">
                                 <thead className="brand-blue">
                                     <tr>
-                                        <th>Creator</th>
-                                        <th>Time</th>
-                                        <th>ProductList</th>
+                                        <th>NGƯỜI TẠO</th>
+                                        <th>THỜI GIAN</th>
+                                        <th>DANH SÁCH</th>
                                     </tr>
                                 </thead>
+                                
                                 <tbody>
                                     {this.state.exports
                                     .sort((a,b)=>(new Date(b.updatedAt.slice(0,19)+'Z')) - (new Date(a.updatedAt.slice(0,19)+'Z')))
                                     .map((item,index)=>{
                                         return(
                                             <tr key={index}
-                                            onClick={()=>this.props.history.push('warehouse/export/' + item.id)}>
+                                            onClick={()=>this.props.history.push('/manager/warehouse/export/' + item.id)}>
                                                 <td>{item.creator.username}</td>
                                                 <td>{item.createdAt.slice(0,10)+" "+item.createdAt.slice(11,19)}</td>
                                                 <td>

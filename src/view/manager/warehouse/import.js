@@ -88,7 +88,7 @@ export default class Import extends React.Component{
             delete item.quantity.m
         }
         let list = this.state.import.productList
-        if(list.length!==0){
+        if(list && list.length!==0){
             for(let i=0; i<list.length; i++){
                 if(item.product === list[i].product){
 					let quantities = list[i].quantity
@@ -177,7 +177,7 @@ export default class Import extends React.Component{
 						for(let n=0; n<list[i].quantity.length; n++){
 							let isExist = false
 							let item = list[i].quantity[n]
-							if(quantity.length !==0){
+							if(quantity && quantity.length !==0){
 								for(let j=0; j<quantity.length; j++){
 									if(quantity[j].color === item.color){
 										isExist = true
@@ -216,22 +216,25 @@ export default class Import extends React.Component{
 									quantity = [...quantity,newItem]
 								}
 							}
+                            else{
+                                quantity = list[i].quantity
+                            }
 						}	
 						axios
-						.put(process.env.REACT_APP_BACKEND_URL + '/warehouses/' + res.data[0].id, {
-							quantity: quantity
-						},{
-							headers: {
-								'Authorization':'bearer '+ Cookie.get('token'),
-							},
-						})
-						.then(response => {
-							this.componentDidMount();
-						})
-						.catch(error => {
-							alert('An error occurred, please check again.');
-							console.log('An error occurred:', error.response);
-						});
+                            .put(process.env.REACT_APP_BACKEND_URL + '/warehouses/' + res.data[0].id, {
+                                quantity: quantity
+                            },{
+                                headers: {
+                                    'Authorization':'bearer '+ Cookie.get('token'),
+                                },
+                            })
+                            .then(response => {
+                                this.componentDidMount();
+                            })
+                            .catch(error => {
+                                alert('An error occurred, please check again.');
+                                console.log('An error occurred:', error.response);
+                            });
                     }
 
 					else{

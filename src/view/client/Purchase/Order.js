@@ -36,7 +36,6 @@ export default class Order extends Component {
                     <Route path='/purchase/paymentinfo' component={Paymentinfo} />
                     <Route path='/purchase/payment/:id' component={Paymentdetail} />
                     <Route path='/purchase/:id'  component={OrderlistDetail} />
-                    
                </Switch> 
           </div>
       </div>
