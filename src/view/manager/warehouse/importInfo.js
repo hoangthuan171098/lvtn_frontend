@@ -2,6 +2,7 @@ import axios from 'axios'
 import React from 'react'
 import Cookie from 'js-cookie'
 import TimeDiff from '../../../Utils/dateTime'
+import { toast } from 'react-toastify'
 
 export default class ImportInfo extends React.Component{
     constructor(props){
@@ -24,7 +25,7 @@ export default class ImportInfo extends React.Component{
                 this.setState({import:res.data})
             })
             .catch(err=>{
-                alert('Cannot connect to server 2!')
+                toast.error('Cannot connect to server!')
             })
         
         this.setState({loading:false})

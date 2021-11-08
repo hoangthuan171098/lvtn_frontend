@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
+import { toast } from 'react-toastify'
 
 export default class Chat extends React.Component{
     constructor(props){
@@ -32,7 +33,7 @@ export default class Chat extends React.Component{
                 this.setState({chats:res.data})
             })
             .catch(error => {
-                alert('Cannot connect to chat');
+                toast.error('Cannot connect to chat');
                 console.log('An error occurred:', error.response);
             });
         return
@@ -87,7 +88,7 @@ export default class Chat extends React.Component{
                 this.setState({message: ''})
             })
             .catch(error => {
-                alert('Cannot connect to server');
+                toast.error('Cannot connect to server');
                 console.log('An error occurred:', error.response);
             });
         return

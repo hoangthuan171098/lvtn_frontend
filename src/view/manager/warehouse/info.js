@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React from 'react'
 import Cookie from 'js-cookie'
+import { toast } from 'react-toastify'
 
 export default class Info extends React.Component{
     constructor(props){
@@ -25,7 +26,7 @@ export default class Info extends React.Component{
                 this.setState({product:res.data})
             })
             .catch(err=>{
-                alert('Cannot connect to server 1!')
+                toast.error('Cannot connect to server!')
             })
 
         await axios
@@ -38,7 +39,7 @@ export default class Info extends React.Component{
                 this.setState({exports:res.data})
             })
             .catch(err=>{
-                alert('Cannot connect to server 1!')
+                toast.error('Cannot connect to server!')
             })
 
         await axios
@@ -61,7 +62,7 @@ export default class Info extends React.Component{
                 this.setState({imports:res.data})
             })
             .catch(err=>{
-                alert('Cannot connect to server 2!')
+                toast.error('Cannot connect to server!')
             })
         
         this.setState({loading:false})

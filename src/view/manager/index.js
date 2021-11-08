@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {Route, Switch, Redirect } from 'react-router-dom'
 import Cookie from 'js-cookie'
+import { toast } from 'react-toastify'
 
 import ManagerOrder from './order'
 import ManagerShipment from './shipment'
@@ -18,7 +19,7 @@ import './style/style.scss'
 class Manager extends Component{
     render(){
         if(Cookie.get('role')!=='Admin' && Cookie.get('role')!=='Manager'){
-            alert('You need to login Manager account!')
+            toast.warning('You need to login Manager account!')
             return(
                 <Redirect to='/'/>
             )

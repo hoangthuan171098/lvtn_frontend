@@ -193,36 +193,45 @@ class Payment extends Component {
     if (this.state.time_pay === "") {
       toast.error("Ngày phát hàng còn trống!");
       return;
-    } else {
+    } 
+    else {
       if (this.state.time_pay.length !== 5) {
         toast.error("Ngày phát hành không chính xác!");
         return;
-      } else {
-        // Array.from(this.state.time_pay).map((t,index) =>{
-
-        // })
+      }
+      else {
         var UseTime = this.state.time_pay.split("");
-        console.log(UseTime[0]);
         if (UseTime[2] !== "/") {
           toast.error("Ngày phát hành không chính xác!");
           return;
         }
         if (UseTime[0] === "0" && UseTime[1] === "0") {
-          toast.error("Ngày phát hành không chính xác!");
+          toast.error("Tháng phát hành không chính xác!");
           return;
         }
         if (UseTime[3] === "0" && UseTime[4] === "0") {
-          toast.error("Ngày phát hành không chính xác!");
+          toast.error("Năm phát hành không chính xác!");
           return;
         }
 
-        if (UseTime[0] > "3") {
-          toast.error("Ngày phát hành không chính xác!");
+        if (Number(UseTime[0]) > 3) {
+          toast.error("Tháng phát hành không chính xác!");
           return;
-        } else {
-          if (UseTime[3] > "1") {
+        } 
+        else {
+          if (Number(UseTime[3]) < 1) {
             toast.error("Ngày phát hành không chính xác!");
             return;
+          }
+          if (UseTime[3] === '2') {
+            if(Number(UseTime[4]) > 2){
+              toast.error("Ngày phát hành không chính xác!");
+              return;
+            }
+            if(UseTime[4] === '1' && UseTime[0] === '1' && UseTime[1] === '2'){
+              toast.error("Ngày phát hành không chính xác!");
+              return;
+            }
           }
 
           if (UseTime[3] === "0") {
@@ -233,14 +242,14 @@ class Payment extends Component {
               UseTime[4] === "7" ||
               UseTime[4] === "8"
             ) {
-              if (UseTime[0] === 3) {
+              if (UseTime[0] === "3") {
                 if (UseTime[1] !== "0" && UseTime[1] !== "1") {
-                  toast.error("Ngày phát hành không chính xác!");
+                  toast.error("Tháng phát hành không chính xác!");
                   return;
                 }
               }
             } else {
-              if (UseTime[0] === 3) {
+              if (Number(UseTime[0]) === 3) {
                 if (UseTime[1] !== "0") {
                   toast.error("Ngày phát hành không chính xác!");
                   return;
@@ -257,14 +266,14 @@ class Payment extends Component {
               return;
             } else {
               if (UseTime[4] === "0" || UseTime[4] === "2") {
-                if (UseTime[0] === 3) {
+                if (UseTime[0] === "3") {
                   if (UseTime[1] !== "0" && UseTime[1] !== "1") {
                     toast.error("Ngày phát hành không chính xác!");
                     return;
                   }
                 }
               } else {
-                if (UseTime[0] === 3) {
+                if (UseTime[0] === "3") {
                   if (UseTime[1] !== "0") {
                     toast.error("Ngày phát hành không chính xác!");
                     return;
@@ -342,7 +351,7 @@ class Payment extends Component {
   };
   checkOutClick = () => {
     if (this.state.status_payment === "") {
-      alert("vui long chon phuong thuc thanh toan");
+      toast.warning("vui long chon phuong thuc thanh toan");
       return;
     }
     if (this.state.status_payment === "paid") {
@@ -750,9 +759,7 @@ class Payment extends Component {
                 </div>
                   </>
                   :
-
                   <>
-
                     <div>
                       <img  
                           onClick = {this.handleClickQr}
@@ -761,20 +768,6 @@ class Payment extends Component {
                     </div>
                   </>
                 }
-                
-                {/* <div className="row mb-md-5">
-                  <div className="col">
-                    {" "}
-                    <button
-                      type="button"
-                      name
-                      id
-                      className="btn btn-lg btn-block "
-                    >
-                      PURCHASE $37 SEK
-                    </button>{" "}
-                  </div>
-                </div> */}
               </div>
             </div>
           </Modal.Body>

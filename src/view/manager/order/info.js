@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import Cookie from "js-cookie"
 import axios from 'axios'
-import Modal from 'react-modal'
-
+// import Modal from 'react-modal'
+import Modal from 'react-bootstrap/Modal'
+import { toast } from 'react-toastify'
 
 import Shipment from './component/shipment'
 import Status from './component/status'
@@ -91,11 +92,11 @@ class OrderInfo extends Component {
 						to: this.state.order.buyer.id,
 						isread: false
 					},{ headers: {'Authorization':'bearer '+ Cookie.get('token')}})
-				alert("confirmed order success!");
+				toast.success("Đã xác nhận đơn hàng")
 				this.props.history.push('/manager/orders')
 			})
 			.catch(error => {
-				alert('An error occurred, please check again.');
+				toast.error("Đã xảy ra lỗi, hãy thử lại!")
 				console.log('An error occurred:', error.response);
 			});
 		return
@@ -107,13 +108,13 @@ class OrderInfo extends Component {
 			let item = productList[i]
 			if(item.quantity){
 				if(item.quantity>this.warehousequantity(item.product.name,item.color)){
-					alert("Sản phẩm "+item.product.name + ' tồn kho không đủ' )
+					toast.warning("Sản phẩm "+item.product.name + ' tồn kho không đủ' )
 					return
 				}
 			}
 			if(item.quantity_m){
 				if(item.quantity_m>this.warehousequantityM(item.product.name,item.color)){
-					alert("Sản phẩm "+item.product.name + ' tồn kho không đủ' )
+					toast.warning("Sản phẩm "+item.product.name + ' tồn kho không đủ' )
 					return
 				}
 			}
@@ -187,7 +188,7 @@ class OrderInfo extends Component {
 				},
 			})
 			.catch(err=>{
-				alert('Cannot create export!')
+				toast.error('Cannot create export!')
 			})
 
 		await axios
@@ -213,14 +214,14 @@ class OrderInfo extends Component {
 						},
 					})
 					.catch(error => {
-						alert('Cannot pack products')
+						toast.error('Cannot pack products')
 						console.log('An error occurred:', error.response)
 					});
-				alert("Packed all product success!")
+				toast.success("Packed all product success!")
 				this.props.history.push('/manager/orders')
 			})
 			.catch(err=>{
-				alert('Cannot create shipment')
+				toast.error('Cannot create shipment')
 				console.log('An error occurred:', err.response)
 			})
 	}
@@ -242,18 +243,18 @@ class OrderInfo extends Component {
 						to: this.state.order.buyer.id,
 						isread: false
 					},{ headers: {'Authorization':'bearer '+ Cookie.get('token')}})
-				alert("cancled order success!");
+				toast.success("cancled order success!");
 				this.props.history.push('/manager/orders')
 			})
 			.catch(error => {
-				alert('An error occurred, please check again.');
+				toast.error('An error occurred, please check again.');
 				console.log('An error occurred:', error.response);
 			});
 	}
 
 	confirmDoneClick = ()=>{
 		if(this.state.earlyDone.reason === ''){
-			alert('Xin hãy nhập lý do.')
+			toast.warning('Xin hãy nhập lý do.')
 			return
 		}
 		axios
@@ -266,11 +267,11 @@ class OrderInfo extends Component {
 				},
 			})
 			.then(response => {
-				alert("Đơn hàng đã hoàn tất!")
+				toast.success("Đơn hàng đã hoàn tất!")
 				this.props.history.push('/manager/orders')
 			})
 			.catch(error => {
-				alert('Đã xãy ra lỗi.');
+				toast.error('Đã xãy ra lỗi.');
 				console.log('An error occurred:', error.response);
 			});
 	}
@@ -306,6 +307,12 @@ class OrderInfo extends Component {
 		else{
 			return 0
 		}
+	}
+
+	itemExistColor = (buyQuantity,existQuantity)=>{
+		if(!buyQuantity) return 'blue'
+		if(buyQuantity<=existQuantity) return 'blue'
+		return 'red'
 	}
 
 	showPackClick = ()=>{
@@ -348,30 +355,36 @@ class OrderInfo extends Component {
 						</tr>
 					</thead>
 					<tbody>
-					{productList.map((item,index)=>{
-						return(
-						<tr key={index}>
-							<td><span>{item.product.name}</span></td>
-							<td>{item.color}</td>
-							<td>
-								{item.quantity? item.quantity:'0'}/{this.warehousequantity(item.product.name,item.color)}
-							</td>
-							<td>
-								{item.quantity_m? item.quantity_m:'0'}/{this.warehousequantityM(item.product.name,item.color)}
-							</td>
-							<td className={this.state.isPartial? '':'d-none'}>
-								<input type='number' className='short-input mr-4'
-									onChange={e=>{this.changePackQuantity(e,index)}}
-								></input>
-							</td>
-							<td className={this.state.isPartial? '':'d-none'}>
-								<input type='number' className='short-input'
-									onChange={e=>{this.changePackQuantityM(e,index)}}
-								></input>
-							</td>
-						</tr>
-						)
-					})}
+						{productList.map((item,index)=>{
+							return(
+							<tr key={index}>
+								<td><span>{item.product.name}</span></td>
+								<td>{item.color}</td>
+								<td>
+									{item.quantity? item.quantity:'0'}/
+									<span style={{color:this.itemExistColor(item.quantity,this.warehousequantity(item.product.name,item.color))}}>
+										{this.warehousequantity(item.product.name,item.color)}
+									</span>
+								</td>
+								<td>
+									{item.quantity_m? item.quantity_m:'0'}/
+									<span style={{color:this.itemExistColor(item.quantity_m,this.warehousequantityM(item.product.name,item.color))}}>
+										{this.warehousequantityM(item.product.name,item.color)}
+									</span>
+								</td>
+								<td className={this.state.isPartial? '':'d-none'}>
+									<input type='number' className='short-input mr-4'
+										onChange={e=>{this.changePackQuantity(e,index)}}
+									></input>
+								</td>
+								<td className={this.state.isPartial? '':'d-none'}>
+									<input type='number' className='short-input'
+										onChange={e=>{this.changePackQuantityM(e,index)}}
+									></input>
+								</td>
+							</tr>
+							)
+						})}
 					</tbody>
 				</table>
 			</div>
@@ -563,7 +576,7 @@ class OrderInfo extends Component {
 							<div className='card-body'>
 								<div className='row'>
 									<div className='w-50'>
-										<span className='impress'>Người Mua:</span>
+										<span className='impress' style={{fontSize:13+'px'}}>NGƯỜI MUA:</span>
 									</div>
 									<div className='w-50'>
 										<span onClick={()=>this.openModal()}
@@ -605,8 +618,8 @@ class OrderInfo extends Component {
 				</div>
 				
 				<Modal
-					isOpen={this.state.openModal}
-					onRequestClose={this.closeModal}
+					show={this.state.openModal}
+					onHide={this.closeModal}
 					contentLabel="Chọn sản phẩm"
 					ariaHideApp={false}
 					style={{content:{marginLeft:300+'px',marginTop: 50+'px'}}}
@@ -615,21 +628,31 @@ class OrderInfo extends Component {
 				</Modal>
 
 				<Modal
-					isOpen={this.state.earlyDone.show}
-					onRequestClose={this.closeDoneModal}
+					show={this.state.earlyDone.show}
+					onHide={this.closeDoneModal}
+					size='md'
 					contentLabel="Lý do"
-					ariaHideApp={false}
-					style={{content:
-						{margin:'auto',width:500+'px',height:220+'px'}
-					}}
+					centered
 				>
-					<div className='row'>
-						<label style={{fontSize:15+'px'}}>Lý do:</label>
-					</div>
-					<textarea style={{width:100+'%',marginBottom:10+'px'}} rows={5}
-						onChange={(e)=>this.setState({earlyDone:{...this.state.earlyDone,reason:e.target.value}})} />
-					<button className='btn btn-info mr-4' onClick={this.confirmDoneClick}>Xác nhận</button>
-					<button className='btn' style={{backgroundColor:'#e52d27',color:'white'}} onClick={this.closeDoneModal}>Hủy</button>
+					<Modal.Body >
+						<div className="card border-0">
+							<div className="card-header pb-0">
+								<h2 className="card-title space ">Hoàn thành sớm đơn hàng</h2>
+								<hr className="my-0" />
+							</div>
+							<div className="card-body">
+								<div className='row'>
+									<label style={{fontSize:15+'px'}}>Lý do:</label>
+								</div>
+								<textarea style={{width:100+'%',marginBottom:10+'px'}} rows={5}
+									onChange={(e)=>this.setState({earlyDone:{...this.state.earlyDone,reason:e.target.value}})} />
+							</div>
+						</div>
+					</Modal.Body>
+					<Modal.Footer>
+						<button className='btn-info mr-4' onClick={this.confirmDoneClick}>Xác nhận</button>
+						<button style={{backgroundColor:'#e52d27',color:'white'}} onClick={this.closeDoneModal}>Hủy</button>
+					</Modal.Footer>
 				</Modal>
 			</div>
 		)
@@ -645,7 +668,7 @@ class OrderInfo extends Component {
     let newProductList
 
 	if(packList.length===0){
-		alert('Xin hãy nhập số lượng vải đóng gói!')
+		toast.warning('Xin hãy nhập số lượng vải đóng gói!')
 		return
 	}
 
@@ -668,15 +691,15 @@ class OrderInfo extends Component {
         }
         if(packList[i].quantity){
 			if(packList[i].quantity<0){
-				alert("Số lượng sản phẩm không được nhỏ hơn 0")
+				toast.warning("Số lượng sản phẩm không được nhỏ hơn 0")
 				return
 			}
 			if(packList[i].quantity>this.state.productList.find(i=>i.product.name===item.product.name&i.color===item.color).quantity){
-				alert("Số lượng sản phẩm vượt quá số sản phẩm trong đơn hàng")
+				toast.warning("Số lượng sản phẩm vượt quá số sản phẩm trong đơn hàng")
 				return
 			}
 			if(packList[i].quantity>this.warehousequantity(item.product.name,item.color)){
-				alert("Số lượng sản phẩm không được vượt quá tồn kho")
+				toast.warning("Số lượng sản phẩm không được vượt quá tồn kho")
 				return
 			}
 			item ={...item,quantity:packList[i].quantity}
@@ -695,15 +718,15 @@ class OrderInfo extends Component {
         }
         if(packList[i].quantity_m){
 			if(packList[i].quantity_m<0){
-				alert("Số lượng sản phẩm không được nhỏ hơn 0")
+				toast.warning("Số lượng sản phẩm không được nhỏ hơn 0")
 				return
 			}
 			if(packList[i].quantity_m>this.state.productList.find(i=>i.product.name===item.product.name&i.color===item.color).quantity_m){
-				alert("Số lượng sản phẩm vượt quá số sản phẩm trong đơn hàng")
+				toast.warning("Số lượng sản phẩm vượt quá số sản phẩm trong đơn hàng")
 				return
 			}
 			if(packList[i].quantity_m>this.warehousequantityM(item.product.name,item.color)){
-				alert("Số lượng sản phẩm không được vượt quá tồn kho")
+				toast.warning("Số lượng sản phẩm không được vượt quá tồn kho")
 				return
 			}
 			item ={...item,quantity_m:packList[i].quantity_m}
@@ -822,7 +845,7 @@ class OrderInfo extends Component {
 			},
 		})
 		.catch(err=>{
-			alert('Cannot create export!')
+			toast.error('Cannot create export!')
 		})
 
 	await axios
@@ -853,14 +876,14 @@ class OrderInfo extends Component {
 					},
 				})
 				.catch(error => {
-					alert('Cannot pack products')
+					toast.error('Cannot pack products')
 					console.log('An error occurred:', error.response)
 				});
-			alert("Packed partial product success!")
+			toast.success("Packed partial product success!")
 			this.componentDidMount()
 		})
 		.catch(err=>{
-			alert('Cannot create shipment')
+			toast.success('Cannot create shipment')
 			console.log('An error occurred:', err.response)
 		})
     return

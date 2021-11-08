@@ -130,7 +130,7 @@ export default class Addressorder extends Component {
                         aria-labelledby="contained-modal-title-vcenter"
                         centered
                       >
-                        <Modal.Header></Modal.Header>
+                        <Modal.Header>header</Modal.Header>
                         <Modal.Body>
                           <div className="card border-0">
                             <div className="card-header pb-0">

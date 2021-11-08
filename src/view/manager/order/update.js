@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Cookie from "js-cookie"
 import axios from "axios"
 import Modal from 'react-modal'
+import { toast } from 'react-toastify'
 
 class OrderUpdate extends Component {
   constructor(props) {
@@ -50,7 +51,7 @@ class OrderUpdate extends Component {
         this.setState({productCategories:res.data})
       })
       .catch(err=>{
-        alert('Cannot connect to server!!!!')
+        toast.error('Cannot connect to server!!!!')
         console.log(err.response)
       })
 
@@ -64,7 +65,7 @@ class OrderUpdate extends Component {
         this.setState({users:res.data})
       })
       .catch(err=>{
-        alert('Cannot connect to server!!!!')
+        toast.error('Cannot connect to server!!!!')
         console.log(err.response)
       })
 
@@ -78,7 +79,7 @@ class OrderUpdate extends Component {
         this.setState({products:res.data})
       })
       .catch(err=>{
-        alert('Cannot connect to server!!!!')
+        toast.error('Cannot connect to server!!!!')
         console.log(err.response)
       })
     this.setState({ loading: false, order: data});
@@ -97,11 +98,11 @@ class OrderUpdate extends Component {
         },
       })
       .then(response => {
-        alert("Update order success!");
+        toast.success("Update order success!");
         this.componentDidMount();
       })
       .catch(error => {
-        alert('An error occurred, please check again.');
+        toast.error('An error occurred, please check again.');
         console.log('An error occurred:', error.response);
       });
     return
@@ -155,7 +156,7 @@ class OrderUpdate extends Component {
         colors = res.data.colors
       })
       .catch(()=>{
-        alert('cannot connect to server!!!')
+        toast.error('cannot connect to server!!!')
       })
     let editList = this.state.edit
     editList[index] = {
@@ -186,13 +187,23 @@ class OrderUpdate extends Component {
 
   editQuantityChange = (value,index)=>{
     let editList = this.state.edit
-    editList[index].roll = Number(value) 
+    let quantity = Number(value)
+    if(quantity< 0 ||  quantity %1 !==0){
+      toast.error("Số cuộn không hợp lệ!");
+      return;
+    }
+    editList[index].roll = Number(value)
     this.setState({edit: editList})
   }
 
-  editQuantityMChange = (value,index)=>{
+  editQuantityMChange = (event,index)=>{
+    let quantity = Number(event.target.value)
+    if(quantity< 0 ||  quantity %1 !==0){
+      toast.error("Số mét không hợp lệ!");
+      return;
+    }
     let editList = this.state.edit
-    editList[index].m = Number(value)
+    editList[index].m = quantity
     this.setState({edit: editList})
   }
 
@@ -424,7 +435,7 @@ class OrderUpdate extends Component {
                               </td>
                               <td>
                                 <input className='form-control' defaultValue={item.quantity_m? item.quantity_m:0} min={0}
-                                  onChange={(e)=>this.editQuantityMChange(e.target.value,index)}
+                                  onChange={(e)=>this.editQuantityMChange(e,index)}
                                 ></input>
                               </td>
                               <td>

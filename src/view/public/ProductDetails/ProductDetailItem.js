@@ -6,17 +6,18 @@ import { Link } from "react-router-dom";
 import "./styleproductitem.scss";
 import Cookie from "js-cookie";
 import {withRouter} from "react-router"
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
+
 class ProductDetailItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: true,
       authenticate: true,
-      quantity: "",
+      quantity: 0,
       color: "",
-      quantity_m: "",
+      quantity_m: 0,
     };
   }
   handleMeter = (e) => {
@@ -65,23 +66,18 @@ class ProductDetailItem extends Component {
   addtocart = () => {
     var { productdetail } = this.props;
     
-    if (this.state.quantity ==="" ) {
-      toast.error("Vui lòng nhập số Cuộn!");
+    if (this.state.quantity === 0 && this.state.quantity_m === 0) {
+      toast.error("Vui lòng nhập số lượng đặt mua!");
      
       return;
     }
-    if( this.state.quantity <= 0 ||  this.state.quantity % 1 !==0  ){
+    if(this.state.quantity < 0 || this.state.quantity % 1 !==0  ){
       toast.error("Số cuộn không hợp lệ!");
      
       return;
     }
-    if( this.state.quantity_m === "" ){
-      toast.error("Vui lòng nhập số Mét!");
-     
-      return;
-    }
    
-    if(this.state.quantity_m <= 0 || this.state.quantity_m %1 !==0){
+    if(this.state.quantity_m < 0 || this.state.quantity_m %1 !==0){
       toast.error("Số mét không hợp lệ!");
      
       return;

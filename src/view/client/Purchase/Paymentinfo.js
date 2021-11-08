@@ -87,8 +87,7 @@ export default class Paymentinfo extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.transections.map((payment, index) => {
-                console.log(payment.order.id);
+              {this.state.transections.filter(i=>i.order.buyer===Cookie.get('id')).map((payment, index) => {
                 var total = 0;
                 return (
                   <tr key={index}>
@@ -175,16 +174,6 @@ export default class Paymentinfo extends Component {
                   </li>
                 );
               })}
-
-              {/* <li class="page-item">
-                <a class="page-link">2</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link">3</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link">Next</a>
-              </li> */}
             </ul>
           </nav>
         </div>

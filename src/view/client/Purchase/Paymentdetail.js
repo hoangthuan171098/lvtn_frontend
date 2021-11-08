@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Cookie from "js-cookie";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default class Paymentdetail extends Component {
   
@@ -45,7 +46,7 @@ export default class Paymentdetail extends Component {
     orders.map((order,index)=>{
         order.status = 'cancled';
     })
-    alert("Bạn đã hủy thành công đơn hàng!");
+    toast.success("Bạn đã hủy thành công đơn hàng!");
     this.setState({orders:orders})
     axios
       .put(process.env.REACT_APP_BACKEND_URL + '/orders/' + id, {
@@ -59,7 +60,7 @@ export default class Paymentdetail extends Component {
        
       })
       .catch(error => {
-        alert('An error occurred, please check again.');
+        toast.error('An error occurred, please check again.');
         console.log('An error occurred:', error.response);
       });
     return

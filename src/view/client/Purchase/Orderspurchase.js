@@ -4,6 +4,7 @@ import Cookie from "js-cookie";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
 import axios from "axios";
+import { toast } from "react-toastify";
 class Orderspurchase extends Component {
   constructor(props) {
     super(props);
@@ -48,11 +49,11 @@ class Orderspurchase extends Component {
           },
         })
         .then(response => {
-          alert('Destroy success.');
+          toast.success('Destroy success.');
           window.location.href = "/purchase"
         })
         .catch(error => {
-          alert('Destroy failed !!!');
+          toast.error('Destroy failed !!!');
          
         });
     }

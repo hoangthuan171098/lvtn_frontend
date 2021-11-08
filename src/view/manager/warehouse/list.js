@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 import {Link} from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 class List extends Component{
     constructor(props){
@@ -13,6 +14,7 @@ class List extends Component{
                 category: "",
                 name: ""
             },
+            showMore: [],
             productCategories: [],
             warehouse: [],
             imports: [],
@@ -44,7 +46,7 @@ class List extends Component{
                 this.setState({exports:res.data})
             })
             .catch(err=>{
-                alert('Cannot connect to server 1!')
+                toast.error('Cannot connect to server!')
             })
 
         await axios
@@ -67,7 +69,7 @@ class List extends Component{
                 this.setState({imports:res.data})
             })
             .catch(err=>{
-                alert('Cannot connect to server 2!')
+                toast.error('Cannot connect to server!')
             })
         this.setState({loading:false})
     }
@@ -82,6 +84,20 @@ class List extends Component{
     
     exportClick = () =>{
         this.props.history.push('/manager/warehouse/export')
+    }
+
+    moreClick = (event,index) =>{
+        event.preventDefault()
+        let list = this.state.showMore
+        list[index] = true
+        this.setState({showMore:list})
+    }
+
+    hideClick = (event,index) =>{
+        event.preventDefault()
+        let list = this.state.showMore
+        delete list[index]
+        this.setState({showMore:list})
     }
 
     render(){
@@ -182,14 +198,37 @@ class List extends Component{
                                         <tr key={index}>
                                             <td onClick={()=>this.infoClick(item.id)}>{item.id}</td>
                                             <td onClick={()=>this.infoClick(item.id)}>{item.product.name}</td>
-                                            <td onClick={()=>this.infoClick(item.id)}>
-                                                {item.quantity.length!==0? item.quantity.map((quantity,index)=>{
-                                                    if(index === 2)
-                                                        return(<p key={index}>...</p>)
-                                                    if(index === 3)
-                                                        return <></>
+                                            <td>
+                                                {item.quantity.length!==0? item.quantity.map((quantity,index2)=>{
+                                                    if(index2 === 2)
+                                                        return(
+                                                        <>
+                                                            <p style={{cursor:'pointer'}}
+                                                            className={this.state.showMore[index]?'d-none':''} onClick={(e)=>this.moreClick(e,index)}>...</p>
+                                                            <p className={this.state.showMore[index]?'':'d-none'} 
+                                                            >{quantity.color + ': '}{quantity.m ?
+                                                                (quantity.roll? 
+                                                                    quantity.m + ' x m,' + quantity.roll + ' x roll'
+                                                                : quantity.m + ' x m')
+                                                                :quantity.roll + ' x cuộn'
+                                                            }
+                                                            </p>
+                                                        </>
+                                                        )
+                                                    if(index2 >= 3){
+                                                        return(
+                                                            <p key={index2} className={this.state.showMore[index]?'':'d-none'} 
+                                                            >{quantity.color + ': '}{quantity.m ?
+                                                                (quantity.roll? 
+                                                                    quantity.m + ' x m,' + quantity.roll + ' x roll'
+                                                                : quantity.m + ' x m')
+                                                                :quantity.roll + ' x cuộn'
+                                                            }
+                                                            </p>
+                                                        )
+                                                    }
                                                     return(
-                                                        <p key={index}>{quantity.color + ': '}{quantity.m ?
+                                                        <p key={index2}>{quantity.color + ': '}{quantity.m ?
                                                             (quantity.roll? 
                                                                 quantity.m + ' x m,' + quantity.roll + ' x roll'
                                                             : quantity.m + ' x m')

@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { Link } from "react-router-dom"
 import './style/register.scss'
 import axios from 'axios'
+import { toast } from "react-toastify"
 
 class Register extends Component {
     constructor(props) {
@@ -54,12 +55,12 @@ class Register extends Component {
                     this.props.history.push('/login')
                 })
                 .catch(error => {
-                    alert('Đăng ký thất bại');
+                    toast.error('Đăng ký thất bại');
                     console.log('An error occurred:', error.response);
                 });
             return;
         }
-        alert('Email or username have been use, please change!!!');
+        toast.error('Email or username have been use, please change!!!');
         return;
     };
 

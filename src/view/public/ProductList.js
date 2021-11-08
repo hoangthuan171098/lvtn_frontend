@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Cookie from "js-cookie";
 import axios from "axios";
+import { toast } from 'react-toastify';
 // import '../styles/components/style.scss';
 // import '../styles/components/flexslider.css';
 
@@ -134,12 +135,12 @@ class ProductList extends Component {
             },
           })
           .then(response => {
-            alert("Checkout success!");
+            toast.success("Checkout success!");
             Cookie.remove('cart');
             this.setState({cart: {items:[], total:0}});
           })
           .catch(error => {
-            alert('An error occurred, please check again.');
+            toast.error('An error occurred, please check again.');
             console.log('An error occurred:', error.response);
           });
         return;

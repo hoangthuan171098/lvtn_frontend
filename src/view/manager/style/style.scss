@@ -26,6 +26,7 @@
 
     .btn{
         min-width: 40px;
+        width: auto;
     }
 
     h1,
@@ -73,6 +74,10 @@
 
     .row{
         margin: 0 !important;
+    }
+
+    .row>*{
+        padding: 0;
     }
 
     .nav-item{

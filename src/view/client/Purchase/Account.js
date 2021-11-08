@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Cookie from "js-cookie";
 import axios from "axios";
 import { withRouter } from "react-router";
+import { toast } from 'react-toastify'
 class Account extends Component {
   constructor(props) {
     super(props);
@@ -128,7 +129,7 @@ class Account extends Component {
           this.props.history.push("/purchase/loca");
         })
         .catch((error) => {
-          alert("Update failed !!!");
+          toast.error("Update failed !!!");
           console.log("An error occurred:", error.response);
         });
     } else {
@@ -155,11 +156,11 @@ class Account extends Component {
           }
         )
         .then((response) => {
-          alert("update profile success.");
+          toast.success("update profile success.");
           this.props.history.push("/purchase/loca");
         })
         .catch((error) => {
-          alert("Update failed !!!");
+          toast.error("Update failed !!!");
           console.log("An error occurred:", error.response);
         });
     }

@@ -3,7 +3,7 @@ import "./style/shippingaddress.scss";
 import Cookie from "js-cookie";
 import axios from "axios";
 import {Link} from "react-router-dom"
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 export default class Shippingaddress extends Component {
   constructor(props) {
     super(props);
@@ -135,7 +135,7 @@ export default class Shippingaddress extends Component {
           this.props.history.push("/payment");
         })
         .catch((error) => {
-          alert("Update failed !!!");
+          toast.error("Update failed !!!");
           console.log("An error occurred:", error.response);
         });
     } else {
@@ -162,11 +162,11 @@ export default class Shippingaddress extends Component {
           }
         )
         .then((response) => {
-          alert("update profile success.");
+          toast.success("update profile success.");
           this.props.history.push("/payment");
         })
         .catch((error) => {
-          alert("Update failed !!!");
+          toast.error("Update failed !!!");
           console.log("An error occurred:", error.response);
         });
     }
@@ -205,7 +205,6 @@ export default class Shippingaddress extends Component {
       await this.setState({
         info: { ...this.state.info, wards: "" },
       })
-     
      }
   }
   Distric = async (e) =>{
@@ -226,10 +225,6 @@ export default class Shippingaddress extends Component {
       await this.setState({
         info: { ...this.state.info, wards: e.target.value },
       })
-    
-
-    
-    
   }
   render() {
     console.log(this.state.info.region)

@@ -39,8 +39,6 @@ class Shopcart extends Component {
           }
         })
         .then(response =>{
-         
-          // Cookie.remove('cart')
           window.location.href="/location"
         })
         .catch(err => {
@@ -49,8 +47,12 @@ class Shopcart extends Component {
   }
   updateMeterClick = (event,index) =>{
     let productList = this.state.productList
-    if(event.target.value<= 0 ||  event.target.value %1 !==0 ){
-
+    if(event.target.value==0 && productList[index].quantity==0 ){
+      toast.error("Số mét và số cuộn khổng thể bằng 0!");
+      event.target.value = productList[index].quantity_m;
+      return;
+    }
+    if(event.target.value< 0 ||  event.target.value %1 !==0 ){
       toast.error("Số mét không hợp lệ!");
       event.target.value = productList[index].quantity_m;
       return;
@@ -62,8 +64,12 @@ class Shopcart extends Component {
   }
   updateProductClick = (event,index) =>{
     let productList = this.state.productList
-    if(event.target.value<= 0 ||  event.target.value %1 !==0){
-
+    if(event.target.value==0 && productList[index].quantity_m==0 ){
+      toast.error("Số mét và số cuộn khổng thể bằng 0!");
+      event.target.value = productList[index].quantity;
+      return;
+    }
+    if(event.target.value< 0 ||  event.target.value %1 !==0){
       toast.error("Số cuộn không hợp lệ!");
       event.target.value = productList[index].quantity;
       return;
@@ -106,6 +112,7 @@ class Shopcart extends Component {
             <tbody>
               {this.state.productList.map((item, index) => {
                 total += parseInt(item.product.price)*item.quantity
+                total += parseInt(item.product.price)*item.quantity_m
                 return (
                   <tr key={index}>
                     <td>
@@ -145,7 +152,7 @@ class Shopcart extends Component {
                       </div>
                     </td>
                     <td className="text-center text-lg text-medium">{(item.product.price*1).toLocaleString('en')} VNĐ</td>
-                    <td className="text-center text-lg text-medium">{(parseInt(item.product.price)*item.quantity).toLocaleString('en')} VNĐ</td>
+                    <td className="text-center text-lg text-medium">{(parseInt(item.product.price)*item.quantity+parseInt(item.product.price)*item.quantity_m).toLocaleString('en')} VNĐ</td>
                     <td className="text-center">
                       <Link
                         className="remove-from-cart"

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Cookie from "js-cookie"
 import axios from 'axios'
 import Modal from 'react-modal'
+import { toast } from 'react-toastify'
 
 import Status from './component/status'
 import UserInfo from '../components/UserInfo'
@@ -30,7 +31,7 @@ class ShipmentInfo extends Component {
 				this.setState({users:res.data})
 			})
 			.catch(err=>{
-				alert('Cannot connect to server!!!!')
+				toast.error('Cannot connect to server!!!!')
 				console.log(err.response)
 			})
 		let response = await fetch(process.env.REACT_APP_BACKEND_URL + "/shipments/" + this.props.match.params.id,{
@@ -135,16 +136,16 @@ class ShipmentInfo extends Component {
 							}
 						})
 						.then(res=>{
-							alert("deliver product  success!");
+							toast.success("deliver product  success!");
 							this.props.history.push('/manager/shipments')
 						})
 						.catch(err=>{
-							alert('An error occurred, please check again.');
+							toast.error('An error occurred, please check again.');
 							console.log('An error occurred:', err.response);
 						})
 				})
 				.catch(err => {
-					alert('An error occurred, please check again.');
+					toast.error('An error occurred, please check again.');
 					console.log('An error occurred:', err.response);
 				});
 			return
@@ -174,16 +175,16 @@ class ShipmentInfo extends Component {
 						}
 					})
 					.then(res=>{
-						alert("deliver product  success!");
+						toast.success("deliver product success!");
 						this.props.history.push('/manager/shipments')
 					})
 					.catch(err=>{
-						alert('An error occurred, please check again.');
+						toast.error('An error occurred, please check again.');
 						console.log('An error occurred:', err.response);
 					})
 			})
 			.catch(err => {
-				alert('An error occurred, please check again.');
+				toast.error('An error occurred, please check again.');
 				console.log('An error occurred:', err.response);
 			});
 		return
@@ -216,16 +217,16 @@ class ShipmentInfo extends Component {
 						}
 					})
 					.then(res=>{
-						alert("deliver product  success!");
+						toast.success("deliver product  success!");
 						this.props.history.push('/manager/shipments')
 					})
 					.catch(err=>{
-						alert('An error occurred, please check again.');
+						toast.error('An error occurred, please check again.');
 						console.log('An error occurred:', err.response);
 					})
 			})
 			.catch(err => {
-				alert('An error occurred, please check again.');
+				toast.error('An error occurred, please check again.');
 				console.log('An error occurred:', err.response);
 			});
 		return

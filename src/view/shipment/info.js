@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Cookie from "js-cookie"
 import axios from 'axios'
-import Modal from 'react-modal'
+import Modal from 'react-bootstrap/Modal'
 
 class ShipmentInfo extends Component {
 	constructor(props) {
@@ -150,9 +150,9 @@ class ShipmentInfo extends Component {
 	showConfirmImage = () =>{
 		if(this.state.images[0]){
 			return(
-				<div className='row' style={{marginTop:5+'px'}}>
-					<img src={URL.createObjectURL(this.state.images[0])} 
-					alt='hinh xac nhan' style={{margin:'auto'}}/>
+				<div className='row' style={{marginTop:5+'px',width:100+'%'}}>
+					<img src={URL.createObjectURL(this.state.images[0])}
+					alt='hinh xac nhan' style={{margin:'auto',height:200+'px'}}/>
 				</div>
 			)
 		}
@@ -271,6 +271,8 @@ class ShipmentInfo extends Component {
 					</div>
 				</div>
 
+
+
 				<div className='card float-right' style={{width: 20 + '%'}}>
 					<div className='card-body'>
 						<div className='row'>
@@ -284,30 +286,41 @@ class ShipmentInfo extends Component {
 					</div>
 				</div>
             </div>
-			
-			<Modal
-				isOpen={this.state.confirmModal}
-				onRequestClose={this.closeConfirmModal}
-				contentLabel="Xác nhận"
-				ariaHideApp={false}
-				style={{content:
-					{margin:'auto',width:500+'px',height:400+'px'}
-				}}
-			>
-				<div className='row'>
-					<label style={{fontSize:15+'px'}}>Xác nhận:</label>
-				</div>
-				
-				<div style={{marginBottom: 10+'px'}}>
-					<input type='file' onChange={e=>this.setState({images:e.target.files})}/>
-					{this.showConfirmImage()}
-				</div>
-				<div className='row'>
-					<button className='btn btn-info mr-4' onClick={this.doneClick}>Xác nhận</button>
-					<button className='btn' style={{backgroundColor:'#e52d27',color:'white'}} onClick={this.closeConfirmModal}>Hủy</button>
-				</div>
-			</Modal>
 
+			<Modal
+				show={this.state.confirmModal}
+				onHide={this.closeConfirmModal}
+				size="md"
+				aria-labelledby="contained-modal-title-vcenter"
+				centered
+				>
+				<Modal.Body>
+					<div className="card border-0">
+						<div className="card-header pb-0">
+							<h2 className="card-title space ">Hình ảnh xác nhận</h2>
+							<hr className="my-0" />
+						</div>
+						<div className="card-body">
+							<div style={{marginBottom: 10+'px'}}>
+								<input type='file' onChange={e=>this.setState({images:e.target.files})}/>
+								{this.showConfirmImage()}
+							</div>
+						</div>
+					</div>
+				</Modal.Body>
+				<Modal.Footer>
+					<button
+					className='btn-info'
+					variant="secondary"
+					onClick={this.doneClick}
+					>
+					Hoàn tất
+					</button>
+					<button className='btn-success' onClick={this.closeConfirmModal}>
+					Hủy
+					</button>
+				</Modal.Footer>
+				</Modal>
         </div>
 		
       )

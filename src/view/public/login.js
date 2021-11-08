@@ -5,6 +5,7 @@ import { Redirect } from 'react-router'
 import Cookie from 'js-cookie'
 import axios from 'axios'
 import { connect } from 'react-redux'
+import { toast } from "react-toastify"
 
 class Login extends Component {
     constructor(props) {
@@ -57,7 +58,7 @@ class Login extends Component {
             }
         })
         .catch(error => {
-            alert('Email hoặc mật khẩu không chính xác, xin hẫy nhập lại!')
+            toast.error('Email hoặc mật khẩu không chính xác, xin hẫy nhập lại!')
             console.log('An error occurred:', error.response)
         })
     };

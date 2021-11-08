@@ -9,7 +9,7 @@ import ProductDetail from "./view/public/ProductDetails/ProductDetail";
 import Shopcart from "./view/client/Shopcart";
 import Checkout from "./view/client/Checkout";
 import Profile from "./view/client/profile";
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import Server from "./view/server/";
 import Manager from "./view/manager";
 import { Services, News, Team } from "./view/public/components/export";
@@ -26,7 +26,7 @@ import Footer from "./components/Footer";
 import Addressorder from "./view/client/Purchase/Addressorder";
 import Account from "./view/client/Purchase/Account";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import "react-toastify/dist/ReactToastify.css";
 class App extends Component {
   render() {
     return (

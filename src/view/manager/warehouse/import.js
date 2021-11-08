@@ -2,6 +2,7 @@ import React from "react"
 import Modal from "react-modal"
 import axios from 'axios'
 import Cookie from 'js-cookie'
+import { toast } from "react-toastify"
 
 export default class Import extends React.Component{
     constructor(props){
@@ -37,7 +38,7 @@ export default class Import extends React.Component{
                 this.setState({productCategories:res.data})
             })
             .catch(err=>{
-                alert('Cannot connect to server!!!!')
+                toast.error('Cannot connect to server!!!!')
                 console.log(err.response)
             })
 
@@ -51,7 +52,7 @@ export default class Import extends React.Component{
                 this.setState({products:res.data})
             })
             .catch(err=>{
-                alert('Cannot connect to server!!!!')
+                toast.error('Cannot connect to server!!!!')
                 console.log(err.response)
             })
         this.setState({loading: false})
@@ -78,7 +79,7 @@ export default class Import extends React.Component{
     addProductClick = (event,item) =>{
         event.preventDefault()
         if(Number(item.quantity.roll) <= 0 && Number(item.quantity.m)<=0){
-            alert('Xin hãy nhập số cuộn hoặc mét!')
+            toast.warning('Xin hãy nhập số cuộn hoặc mét!')
             return
         }
         if(Number(item.quantity.roll) <= 0){
@@ -144,7 +145,7 @@ export default class Import extends React.Component{
     submitHandle = () =>{
         let list = this.state.import.productList
         if(list.length === 0){
-            alert('Xin hay them san pham!')
+            toast.warning('Xin hay them san pham!')
             return
         }
 		
@@ -158,10 +159,10 @@ export default class Import extends React.Component{
 				},
 			})
 			.then(response => {
-				alert('Nhập hàng thành công!')
+				toast.success('Nhập hàng thành công!')
 			})
 			.catch(err=>{
-				alert('Cannot connect to server!')
+				toast.error('Cannot connect to server!')
 			})
 
         for(let i=0; i<list.length; i++){
@@ -232,7 +233,7 @@ export default class Import extends React.Component{
                                 this.componentDidMount();
                             })
                             .catch(error => {
-                                alert('An error occurred, please check again.');
+                                toast.error('An error occurred, please check again.');
                                 console.log('An error occurred:', error.response);
                             });
                     }
