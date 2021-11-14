@@ -24,6 +24,9 @@ class SideBar extends Component{
                                     <label>MANAGER</label>
                                 </li>
                                 <li class="nav-item">
+                                    <Link to="/manager/dashboards" class="nav-link"><span class="pcoded-micon"><i class="fa fa-home"></i></span><span class="pcoded-mtext">DASHBOARDS</span></Link>
+                                </li>
+                                <li class="nav-item">
                                     <Link to="/manager/orders" class="nav-link"><span class="pcoded-micon"><i class="fa fa-navicon"></i></span><span class="pcoded-mtext">ĐƠN HÀNG</span></Link>
                                 </li>
                                 <li class="nav-item">

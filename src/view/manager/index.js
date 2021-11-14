@@ -8,7 +8,7 @@ import ManagerShipment from './shipment'
 import ManagerChat from './chat'
 import ManagerWarehouse from './warehouse'
 import Profileuser from './components/Profileuser'
-
+import DashBoards from './dashboard'
 import SideBar from './components/SideBar'
 import Header from './components/Header'
 
@@ -30,7 +30,9 @@ class Manager extends Component{
                 <Header/>
                 <div className='content'>
                     <Switch>
+
                         <Route exact path='/manager' component={ManagerOrder} />
+                        <Route path='/manager/dashboards' component={DashBoards} />
                         <Route path='/manager/orders' component={ManagerOrder} />
                         <Route path='/manager/shipments' component={ManagerShipment} />
                         <Route path='/manager/warehouse' component={ManagerWarehouse} />

@@ -761,9 +761,11 @@ class Payment extends Component {
                   :
                   <>
                     <div>
+                    <div style={{color:"red",fontSize:15 + 'px'}}
+                      > TỔNG TIỀN : {total.toLocaleString("en")} VNĐ </div>
                       <img  
                           onClick = {this.handleClickQr}
-                          style = {{cursor:"pointer"}}
+                          style = {{cursor:"pointer",height:400 + 'px'}}
                           src="https://cdn.printgo.vn/uploads/media/790919/tao-ma-qr-code-san-pham-1_1620927223.jpg" alt="" />
                     </div>
                   </>
