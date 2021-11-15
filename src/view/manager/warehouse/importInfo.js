@@ -59,9 +59,6 @@ export default class ImportInfo extends React.Component{
                         <div className='row'>
                             <div className='col-8'>
                                 <div className='card'>
-                                    <div className='card-header'>
-                                        Danh sách sản phẩm
-                                    </div>
                                     <div className='card-body'>
                                         <div className="col-sm-12">
                                             <table className="table">
@@ -103,12 +100,12 @@ export default class ImportInfo extends React.Component{
                                 </div>
                             </div>
 
-                            <div className='col-4'>
+                            <div className='col-4 pl-4'>
                                 <div className='card'>
-                                    <div className='card-header'>
+                                    <div className='card-header card-sm'>
                                         <strong>THÔNG TIN:</strong>
                                     </div>
-                                    <div className='card-body'> 
+                                    <div className='card-body-sm'> 
                                         <strong>NGƯỜI TẠO:</strong><span>{this.state.import.creator.username}</span><br/>
                                         <strong>CẬP NHẬT:</strong><span>{this.showTimediff()}</span><br/>
                                         <strong>NGÀY XUẤT:</strong>

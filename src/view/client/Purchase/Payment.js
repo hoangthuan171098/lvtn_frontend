@@ -18,7 +18,7 @@ class Payment extends Component {
       number_pay: "",
       time_pay: "",
       cmnd_pay: "",
-      show: false,
+      show: false,debtShow: false,
       loading: true,
       status_payment: "",
       method:"",
@@ -50,6 +50,12 @@ class Payment extends Component {
   handleShow = () => {
     this.setState({ show: true });
   };
+  handleCloseDebt = () => {
+    this.setState({ debtShow: false });
+  };
+  handleShowDebt = () => {
+    this.setState({ debtShow: true });
+  };
   async componentDidMount() {
     let itemListString = Cookie.get("cart");
 
@@ -59,25 +65,15 @@ class Payment extends Component {
     }
 
     let response1 = await fetch(
-      process.env.REACT_APP_BACKEND_URL +
-        "/users?username=" +
-        Cookie.get("username"),
-      {
-        headers: {
-          Authorization: "bearer " + Cookie.get("token"),
-        },
-      }
+      process.env.REACT_APP_BACKEND_URL +"/users?username=" +Cookie.get("username"),
+      {headers: {Authorization: "bearer " + Cookie.get("token")}}
     );
     let response2 = await fetch(
-      process.env.REACT_APP_BACKEND_URL +
-        "/customer-infos?customerId=" +
-        Cookie.get("id"),
+      process.env.REACT_APP_BACKEND_URL + "/customer-infos?customerId=" + Cookie.get("id"),
       {
-        headers: {
-          Authorization: "bearer " + Cookie.get("token"),
-        },
+        headers: {Authorization: "bearer " + Cookie.get("token")}
       }
-    );
+    )
     if (!response1.ok && !response2.ok) {
       console.log("Cannot connect to sever!");
       return;
@@ -117,63 +113,7 @@ class Payment extends Component {
   }
 
   handleClickQr = () =>{
-    var tempParams = {
-      to_email: this.state.user.email,
-      from_name: "SSS+ Shop",
-      to_name: `${this.state.info.firstName} ${this.state.info.lastName}`,
-      to_address: `${this.state.info.street},${this.state.info.wards},${this.state.info.district},${this.state.info.region}`,
-      list_product: `
-        ${this.state.productList.map((product) => {
-          return `
-            ${product.quantity} Cuộn x ${product.quantity_m} Mét - ${product.product.name} - Màu ${product.color}
-
-            `;
-        })}
-      `,
-    };
-    emailjs
-      .send(
-        "service_usji67r",
-        "template_fl6j2tu",
-        tempParams,
-        "user_P4FiW8xW41BqwLDdM7RSb"
-      )
-      .then(
-        function (response) {
-          console.log("SUCCESS!", response.status, response.text);
-        },
-        function (error) {
-          console.log("FAILED...", error);
-        }
-      );
-
-    axios
-      .post(
-        process.env.REACT_APP_BACKEND_URL + "/transections",
-        {
-          total: 2000,
-          status: this.state.status_payment,
-          address: `${this.state.info.street},${this.state.info.wards},${this.state.info.district},${this.state.info.region}`,
-          buyer: Cookie.get("id"),
-          note: this.state.note,
-          order: this.state.orders[this.state.orders.length - 1].id,
-        },
-        {
-          headers: {
-            Authorization: "bearer " + Cookie.get("token"),
-          },
-        }
-      )
-      .then((response) => {
-        
-        Cookie.remove("cart");
-        this.props.history.push("/purchase");
-        window.location.href = "/purchase";
-      })
-      .catch((err) => {});
-    toast.success("Thanh toán thành công!");
-    this.setState({show:false})
-   
+    this.checkoutOrder()
   }
 
   handleClick = () => {
@@ -292,63 +232,29 @@ class Payment extends Component {
       toast.error("Số chứng minh nhân dân không chính xác!");
       return;
     }
-    var tempParams = {
-      to_email: this.state.user.email,
-      from_name: "SSS+ Shop",
-      to_name: `${this.state.info.firstName} ${this.state.info.lastName}`,
-      to_address: `${this.state.info.street},${this.state.info.wards},${this.state.info.district},${this.state.info.region}`,
-      list_product: `
-        ${this.state.productList.map((product) => {
-          return `
-            ${product.quantity} Cuộn x ${product.quantity_m} Mét - ${product.product.name} - Màu ${product.color}
-
-            `;
-        })}
-      `,
-    };
-    emailjs
-      .send(
-        "service_usji67r",
-        "template_fl6j2tu",
-        tempParams,
-        "user_P4FiW8xW41BqwLDdM7RSb"
-      )
-      .then(
-        function (response) {
-          console.log("SUCCESS!", response.status, response.text);
-        },
-        function (error) {
-          console.log("FAILED...", error);
-        }
-      );
-
-    axios
-      .post(
-        process.env.REACT_APP_BACKEND_URL + "/transections",
-        {
-          total: 2000,
-          status: this.state.status_payment,
-          address: `${this.state.info.street},${this.state.info.wards},${this.state.info.district},${this.state.info.region}`,
-          buyer: Cookie.get("id"),
-          note: this.state.note,
-          order: this.state.orders[this.state.orders.length - 1].id,
-        },
-        {
-          headers: {
-            Authorization: "bearer " + Cookie.get("token"),
-          },
-        }
-      )
-      .then((response) => {
-        
-        Cookie.remove("cart");
-        this.props.history.push("/purchase");
-        window.location.href = "/purchase";
-      })
-      .catch((err) => {});
-    toast.success("Thanh toán thành công!");
-    this.setState({ show: false });
+    this.checkoutOrder()
   };
+
+  confirmDebtClick = async (total) =>{
+    let newDebt
+    if(this.state.info.debt){
+      newDebt = Number(this.state.info.debt) + total
+    }
+    else newDebt = total
+    await axios
+			.put(process.env.REACT_APP_BACKEND_URL + "/customer-infos/" + this.state.info.id,{
+				debt: newDebt
+			},{
+				headers: {'Authorization':'bearer '+ Cookie.get('token')}
+			})
+      .then(()=>{
+        this.checkoutOrder()
+      })
+			.catch(()=>{
+				toast.error('Không thể thanh toán nợ.')
+			})
+  }
+
   checkOutClick = () => {
     if (this.state.status_payment === "") {
       toast.warning("vui long chon phuong thuc thanh toan");
@@ -358,6 +264,20 @@ class Payment extends Component {
       this.setState({ show: true });
       return;
     }
+    if (this.state.status_payment === "debt") {
+      if(this.state.info.debtAble){
+        this.setState({ debtShow: true });
+        return;
+      }
+      else{
+        toast.error('Tài khoản của bạn chưa cho phép ghi nợ.')
+        return;
+      }
+    }
+    this.checkoutOrder()
+  };
+
+  checkoutOrder = ()=>{
     var tempParams = {
       to_email: this.state.user.email,
       from_name: "SSS+ Shop",
@@ -387,7 +307,6 @@ class Payment extends Component {
           console.log("FAILED...", error);
         }
       );
-
     axios
       .post(
         process.env.REACT_APP_BACKEND_URL + "/transections",
@@ -406,13 +325,13 @@ class Payment extends Component {
         }
       )
       .then((response) => {
-       toast.success("Bạn đã đặt đơn hàng thành công!");
+        toast.success("Bạn đã đặt đơn hàng thành công!");
         Cookie.remove("cart");
         this.props.history.push("/purchase");
-        window.location.href = "/purchase";
       })
       .catch((err) => {});
-  };
+  }
+
   render() {
     var total = 0;
     this.state.productList.map((item) => {
@@ -650,25 +569,10 @@ class Payment extends Component {
             <div className="card border-0">
               <div className="card-header pb-0">
                 <h2 className="card-title space ">THANH TOÁN </h2>
-                {/* <p className="card-text text-muted mt-4 space">
-                  SHIPPING DETAILS
-                </p> */}
                 <hr className="my-0" />
               </div>
               <div className="card-body">
                 <div className="row justify-content-between">
-                  {/* <div className="col-auto mt-0">
-                    <p>
-                      <b>
-                        BBBootstrap Team Vasant Vihar 110020 New Delhi India
-                      </b>
-                    </p>
-                  </div>
-                  <div className="col-auto">
-                    <p>
-                      <b>BBBootstrap@gmail.com</b>{" "}
-                    </p>
-                  </div> */}
                 </div>
                 <div className="row mt-4">
                   <div className="col">
@@ -761,9 +665,12 @@ class Payment extends Component {
                   :
                   <>
                     <div>
+                      <div style={{color:"red",fontSize:15 + 'px'}}> 
+                        TỔNG TIỀN : {total.toLocaleString("en")} VNĐ
+                      </div>
                       <img  
                           onClick = {this.handleClickQr}
-                          style = {{cursor:"pointer"}}
+                          style = {{cursor:"pointer",height:400 + 'px'}}
                           src="https://cdn.printgo.vn/uploads/media/790919/tao-ma-qr-code-san-pham-1_1620927223.jpg" alt="" />
                     </div>
                   </>
@@ -783,7 +690,6 @@ class Payment extends Component {
             </Button>
               </>
               :
-
               <>
                 <span 
                   style={{color:"blueviolet",cursor:"pointer"}}
@@ -791,7 +697,51 @@ class Payment extends Component {
                 >Thanh toán bằng phương thức khác</span>
               </>
           }
-            
+          </Modal.Footer>
+        </Modal>
+        <Modal
+          show={this.state.debtShow}
+          onHide={this.handleCloseDebt}
+          size="md"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
+          <Modal.Body>
+            <div className="card border-0">
+              <div className="card-body">
+                <div className="row justify-content-between">
+                </div>
+                <div className="row mt-4">
+                  <div className="col">
+                    <p className="text-muted mb-2">CHI TIẾT THANH TOÁN</p>
+                    <hr className="mt-0" />
+                  </div>
+                </div>
+                <div>
+                  <div style={{color:"red",fontSize:15 + 'px'}}> 
+                    TỔNG TIỀN : {total.toLocaleString("en")} VNĐ
+                  </div>
+                  <div style={{fontSize:15 + 'px'}}> 
+                    NỢ HIỆN TẠI : {this.state.info.debt? Number(this.state.info.debt).toLocaleString("en"):'0'} VNĐ
+                  </div>
+                  <div style={{color:"blue",fontSize:15 + 'px'}}>
+                    NỢ MỚI : 
+                    {this.state.info.debt?
+                      (Number(this.state.info.debt)+total).toLocaleString("en")
+                      :total.toLocaleString("en")
+                    } VNĐ
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={()=>this.confirmDebtClick(total)}>
+              Xác nhận
+            </Button>
+            <Button variant="primary" onClick={this.handleCloseDebt}>
+              Quay Lại
+            </Button>
           </Modal.Footer>
         </Modal>
       </div>

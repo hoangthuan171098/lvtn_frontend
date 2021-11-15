@@ -3,12 +3,16 @@ import Cookie from "js-cookie";
 import axios from "axios";
 import { withRouter } from "react-router";
 import "../style/order.scss";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 import {Link} from "react-router-dom"
 class Profileuser extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      showDebtPay: false,
+      show: false, method: '',debtInput: 0,
       profileimage: "",
       firstname_error: "",
       lastname_error: "",
@@ -28,7 +32,7 @@ class Profileuser extends Component {
         region: "",
         district: "",
         wards: "",
-        street: "",
+        street: ""
       },
       images: [],
       authenticate: true,
@@ -111,6 +115,11 @@ class Profileuser extends Component {
     window.location.href = "/profile";
   };
 
+  showDebtPay = (event) =>{
+    event.preventDefault()
+    this.setState({showDebtPay:!this.state.showDebtPay})
+  }
+
   onSubmitChangeAvatar = async (e) => {
     e.preventDefault();
 
@@ -159,26 +168,6 @@ class Profileuser extends Component {
   };
   handleSubmit = async (event) => {
     event.preventDefault();
-    // if(this.state.info.firstName === ""){
-    //   this.setState({firstname_error: "Vui lòng nhập vào  Họ của bạn!"})
-    //   return
-    // }
-    // else if(this.state.info.lastName ===""){
-    //   this.setState({lastname_error: "Vui lòng nhập tên của bạn!"})
-    //   return
-    // }
-    // else if(this.state.info.firm === ""){
-    //   this.setState({firm_error:"Vui lòng nhập công ty của bạn!"})
-    //   return
-    // }
-    // else if(this.state.info.phoneNumber ===""){
-    //   this.setState({phone_error : "Vui lòng nhập số điện thoại của bạn!"})
-    //   return
-    // }
-    // else if(this.state.info.location.street){
-    //   this.setState({address_error:"Vui lòng chọn địa giao hàng!"})
-    //   return
-    // }
     if (this.state.info.id) {
 
       const formData = new FormData();
@@ -263,6 +252,55 @@ class Profileuser extends Component {
     return;
   };
 
+  momoClick = (event) =>{
+    event.preventDefault()
+    if(this.state.debtInput > this.state.info.debt){
+      alert('Số tiền thanh toán không được lớn hơn số nợ.')
+      return
+    }
+    if(this.state.debtInput === 0){
+      alert('Xin hãy nhập số tiền thanh toán.')
+      return
+    }
+    this.setState({method:'momo'})
+    this.handleShow()
+  }
+
+  zaloClick = (event) =>{
+    event.preventDefault()
+    if(this.state.debtInput > this.state.info.debt){
+      alert('Số tiền thanh toán không được lớn hơn số nợ.')
+      return
+    }
+    if(this.state.debtInput === 0){
+      alert('Xin hãy nhập số tiền thanh toán.')
+      return
+    }
+    this.setState({method:'zalo'})
+    this.handleShow()
+  }
+
+  atmClick = (event) =>{
+    event.preventDefault()
+    if(this.state.debtInput > this.state.info.debt){
+      alert('Số tiền thanh toán không được lớn hơn số nợ.')
+      return
+    }
+    if(this.state.debtInput === 0){
+      alert('Xin hãy nhập số tiền thanh toán.')
+      return
+    }
+    this.setState({method:'atm'})
+    this.handleShow()
+  }
+
+  handleClose = () => {
+    this.setState({ show: false });
+  };
+  handleShow = () => {
+    this.setState({ show: true });
+  };
+
   onImageChange = (event) =>{
     if(event.target.files && event.target.files[0]){
       let reader = new FileReader();
@@ -273,8 +311,8 @@ class Profileuser extends Component {
     }
   }
   render() {
-    console.log(this.state.profileimage)
-    var  image = "https://cf.shopee.vn/file/059dfcece821ff6afb80ef012dfa2447";
+    var total = this.state.debtInput
+    var image = "https://cf.shopee.vn/file/059dfcece821ff6afb80ef012dfa2447";
     if (!this.state.loading && Cookie.get("token")) {
       return (
         <div className="Account_layout">
@@ -282,7 +320,32 @@ class Profileuser extends Component {
           <div className="Account_info">
             <form onSubmit={this.handleSubmit}>
               <div className="form-control">
-                <label className="input-label">Họ </label>
+                <label className="input-label">Tổng nợ: </label>
+                <div>
+                  {this.state.info.debt?
+                    Number(this.state.info.debt).toLocaleString("en")+'VNĐ':'Không'}
+                  <button onClick={(e)=>this.showDebtPay(e)}
+                    className='btn btn-success ml-4'>Thanh toán</button>
+                </div>
+              </div>
+
+              <div
+                className={this.state.showDebtPay? "form-control": 'd-none'}>
+                <div className='row'>
+                  <input type='number'
+                  onChange={(e)=>this.setState({debtInput:Number(e.target.value)})}
+                  placeholder='Nhập số tiền'></input>
+                </div>
+                <button className='btn btn-info ml-4'
+                onClick={(e)=>this.momoClick(e)}>Momo</button>
+                <button className='btn btn-info ml-4'
+                onClick={(e)=>this.zaloClick(e)}>ZaloPay</button>
+                <button className='btn btn-info ml-4'
+                onClick={(e)=>this.atmClick(e)}>ATM</button>
+              </div>
+
+              <div className="form-control">
+                <label className="input-label">Tên </label>
                 <div>
                   <input
                     type="text"
@@ -299,7 +362,7 @@ class Profileuser extends Component {
                 </div>
               </div>
               <div className="form-control">
-                <label className="input-label">Tên</label>
+                <label className="input-label">Họ</label>
                 <div>
                   <input
                     type="text"
@@ -422,6 +485,150 @@ class Profileuser extends Component {
               </div>
             </div>
           </div>
+          <Modal
+            show={this.state.show}
+            onHide={this.handleClose}
+            size="md"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+          >
+            <Modal.Header></Modal.Header>
+            <Modal.Body>
+              <div className="card border-0">
+                <div className="card-header pb-0">
+                  <h2 className="card-title space ">THANH TOÁN </h2>
+                  <hr className="my-0" />
+                </div>
+                <div className="card-body">
+                  <div className="row justify-content-between">
+                  </div>
+                  <div className="row mt-4">
+                    <div className="col">
+                      <p className="text-muted mb-2">THANH TOÁN CHI TIẾT</p>
+                      <hr className="mt-0" />
+                    </div>
+                  </div>
+                  {(this.state.method === "atm")
+                    ?
+                    <>
+                    <div className="form-group">
+                    {" "}
+                    <label htmlFor="NAME" className="small text-muted mb-1">
+                      TÊN CHỦ THẺ
+                    </label>{" "}
+                    <input
+                      type="text"
+                      className="form-control form-control-sm"
+                      name="NAME"
+                      id="NAME"
+                      aria-describedby="helpId"
+                      placeholder="Họ và tên đầy đủ"
+                      style={{ boxShadow: "none" }}
+                      onChange={(e) =>
+                        this.setState({ name_pay: e.target.value })
+                      }
+                    />{" "}
+                  </div>
+                  <div className="form-group">
+                    {" "}
+                    <label htmlFor="NAME" className="small text-muted mb-1">
+                      SỐ THẺ
+                    </label>{" "}
+                    <input
+                      type="number"
+                      className="form-control form-control-sm"
+                      name="NAME"
+                      id="NAME"
+                      aria-describedby="helpId"
+                      placeholder="Nhập số thẻ"
+                      style={{ boxShadow: "none" }}
+                      onChange={(e) =>
+                        this.setState({ number_pay: e.target.value })
+                      }
+                    />{" "}
+                  </div>
+                  <div className="row no-gutters">
+                    <div className="col-sm-6 pr-sm-2">
+                      <div className="form-group">
+                        {" "}
+                        <label htmlFor="NAME" className="small text-muted mb-1">
+                          NGÀY PHÁT HÀNH
+                        </label>{" "}
+                        <input
+                          type="text"
+                          className="form-control form-control-sm"
+                          name="NAME"
+                          id="NAME"
+                          aria-describedby="helpId"
+                          placeholder="mm/yy"
+                          style={{ boxShadow: "none" }}
+                          onChange={(e) =>
+                            this.setState({ time_pay: e.target.value })
+                          }
+                        />{" "}
+                      </div>
+                    </div>
+                    <div className="col-sm-6">
+                      <div className="form-group">
+                        {" "}
+                        <label htmlFor="NAME" className="small text-muted mb-1">
+                          CMND
+                        </label>{" "}
+                        <input
+                          type="number"
+                          className="form-control form-control-sm"
+                          name="NAME"
+                          id="NAME"
+                          aria-describedby="helpId"
+                          placeholder="Nhập số CMND"
+                          style={{ boxShadow: "none" }}
+                          onChange={(e) =>
+                            this.setState({ cmnd_pay: e.target.value })
+                          }
+                        />{" "}
+                      </div>
+                    </div>
+                  </div>
+                    </>
+                    :
+                    <>
+                      <div>
+                        <div style={{color:"red",fontSize:15 + 'px'}}> 
+                          TỔNG TIỀN : {total.toLocaleString("en")} VNĐ
+                        </div>
+                        <img  
+                            // onClick = {this.handleClickQr}
+                            style = {{cursor:"pointer",height:400 + 'px'}}
+                            src="https://cdn.printgo.vn/uploads/media/790919/tao-ma-qr-code-san-pham-1_1620927223.jpg" alt="" />
+                      </div>
+                    </>
+                  }
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+            {(this.state.method === "atm") 
+                ?
+                <>
+                <Button variant="secondary" 
+                // onClick={this.handleClick}
+                >
+                Thanh Toán
+              </Button>
+              <Button variant="primary" onClick={this.handleClose}>
+                Quay Lại
+              </Button>
+                </>
+                :
+                <>
+                  <span 
+                    style={{color:"blueviolet",cursor:"pointer"}}
+                    onClick={this.handleClose}
+                  >Thanh toán bằng phương thức khác</span>
+                </>
+            }
+            </Modal.Footer>
+          </Modal>
         </div>
       );
     }

@@ -119,9 +119,7 @@ class ProductDetailItem extends Component {
           let newlist = [...list,item]
           Cookie.set('cart',JSON.stringify(newlist))
         }
-        
       })
-      
     }
     else{
       Cookie.set('cart',JSON.stringify([item]))

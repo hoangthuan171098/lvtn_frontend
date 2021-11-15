@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Cookie from "js-cookie"
 import axios from 'axios'
-// import Modal from 'react-modal'
 import Modal from 'react-bootstrap/Modal'
 import { toast } from 'react-toastify'
 
@@ -573,7 +572,7 @@ class OrderInfo extends Component {
 
 					<div className='float-right' style={{width: 20 + '%'}}>
 						<div className='card'>
-							<div className='card-body'>
+							<div className='card-body card-sm'>
 								<div className='row'>
 									<div className='w-50'>
 										<span className='impress' style={{fontSize:13+'px'}}>NGƯỜI MUA:</span>
@@ -599,7 +598,7 @@ class OrderInfo extends Component {
 						{this.showShipments()}
 
 						<div className='card'>
-							<div className='card-body' >
+							<div className='card-body card-sm'>
 								<div className='row'>
 									<div className='w-50'>
 										<span className='impress'>Cập nhật:</span>
@@ -614,7 +613,7 @@ class OrderInfo extends Component {
 					</div>
 
 					{this.showShipment()}
-					<div className='clear'></div>
+					<div style={{clear:'both'}}></div>
 				</div>
 				
 				<Modal

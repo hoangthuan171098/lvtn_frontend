@@ -275,7 +275,7 @@ export default class Import extends React.Component{
                         <div className='col-8'>
                             <div className='row d-flex align-items-center'>
                                 <div className='col-lg-4 d-flex align-items-center'>
-                                    <label className='float-left'>Color:</label>
+                                    <label className='float-left'>Màu:</label>
                                     <div className='float-left'>
                                         <select onChange={e=>this.setState({selectProduct:{...this.state.selectProduct,quantity:{...this.state.selectProduct.quantity,color:e.target.value}}})} 
                                             value={this.state.selectProduct.quantity.color} className='short-input'>
@@ -334,20 +334,20 @@ export default class Import extends React.Component{
                     </div>
                 </div>
 
-                <button className='btn btn-info mr-4' onClick={this.submitHandle}>Submit</button>
-                <button className='btn btn-info' onClick={this.backClick}>Back</button>
+                <button className='btn btn-info mr-4' onClick={this.submitHandle}>Xác nhận</button>
+                <button className='btn btn-success' onClick={this.backClick}>Trở về</button>
 
                 
                 {this.showSelectProduct()}
 
 				<div className='card'>
 					<div className='card-body'>
-                        <button className='btn btn-info' onClick={this.openModal}>Add product</button>
+                        <button className='btn btn-info' onClick={this.openModal}>Thêm sản phẩm</button>
 						<table className='table w-75' style={{margin:'auto'}}>
 							<thead>
 								<tr>
-									<th>Name</th>
-									<th>Quantity</th>
+									<th>Tên</th>
+									<th>Số lượng</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -387,13 +387,13 @@ export default class Import extends React.Component{
                 <div className="card">
                     <div className='card-body'>
                         <div class="row">
-                            <div className="col-md-6">
+                            <div className="col-md-6 pr-2">
                                 <div className="form-group">
                                     <label>Nhập từ:</label>
                                     <textarea className="form-control" rows="2"></textarea>
                                 </div>
                             </div>
-                            <div className="col-md-6">
+                            <div className="col-md-6 pl-2">
                                 <div className="form-group">
                                     <label>Ghi chú:</label>
                                     <textarea className="form-control" rows="2"></textarea>

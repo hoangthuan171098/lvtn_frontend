@@ -32,11 +32,11 @@ export default withRouter(connect(mapStateToProps,mapDispatchToProps)(class Head
 
 	async componentDidMount(){
 		this.getData()
-		this.myInterval = setInterval(() => this.getData(),4000)
+		// this.myInterval = setInterval(() => this.getData(),4000)
 	}
 
 	componentWillUnmount(){
-		clearInterval(this.myInterval)
+		// clearInterval(this.myInterval)
 	}
 
 	getData = async ()=>{

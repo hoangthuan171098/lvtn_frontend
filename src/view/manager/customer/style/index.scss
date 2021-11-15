@@ -1,0 +1,110 @@
+.AdminAccount{
+
+    select{
+        margin: 0;
+    }
+
+    
+    label{
+        margin-bottom: 10px;
+        font-size: 15px;
+        font-weight: bolder !important;
+    }
+
+
+
+    input{
+        border-radius: 0% !important;
+        box-sizing: border-box;
+    }
+
+    button{
+        border-radius: 0%;
+    }
+
+    form{
+        padding: 22px 10px 10px 10px;
+        background-color: white;
+        margin-top: 20px;
+    }
+
+    .form-group{
+        padding-right: 100px;
+    }
+    
+    min-height:550px;
+    padding: 10px;
+
+
+    .Create{
+        width: 80%;
+        margin: auto;
+
+        .btn{
+            min-height: 35px;
+        }
+    }
+
+    .Update{
+        width: 80%;
+        margin: auto;
+    }
+
+    .DataList{
+        .DataList-title{
+            margin-bottom: 20px;
+        }
+
+        .DataList-container{
+            margin: auto;
+            .DataList-filter{
+                form{
+                    margin: 20px;
+                    input{
+                        margin-right: 60px;
+                    }
+                }
+            }
+            table{
+                background-color: white;
+                box-shadow: 0px 0px 4px 4px rgb(227,233,243);
+                thead{
+                    background-color: #29b7d3;
+                    color: white;
+                }
+                tbody{
+                    tr:hover{
+                        background-color:rgb(247, 248, 248);
+                    }
+                }
+            }
+        }
+    }
+
+    .table-user-information{
+        background-color: white;
+        box-shadow: 0px 0px 4px 4px whitesmoke;
+        margin-top: 20px;
+        tr{
+            border: none;
+            td{
+                border: none;
+            }
+
+            td:first-child{
+                width: 20%;
+            }
+            .last-row{
+                width: 100% !important;
+                display: flex;
+            }
+        }
+        tr:last-child{
+            padding-bottom: 20px;
+        }
+    }
+}
+
+.min-w-120{
+    min-width: 120px;
+}

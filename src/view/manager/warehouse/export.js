@@ -258,7 +258,7 @@ export default class Export extends React.Component{
                         <div className='col-8'>
                             <div className='row d-flex align-items-center'>
                                 <div className='col-lg-4 d-flex align-items-center'>
-                                    <label className='float-left'>Color:</label>
+                                    <label className='float-left'>Màu:</label>
                                     <div className='float-left'>
                                         <select onChange={e=>this.colorChange(e.target.value)} 
                                             value={this.state.selectProduct.quantity.color} className='short-input'>
@@ -324,7 +324,7 @@ export default class Export extends React.Component{
                 </div>
 
                 <button className='btn btn-info mr-4' onClick={this.submitHandle}>Xác nhận</button>
-                <button className='btn btn-info' onClick={this.backClick}>Trở về</button>
+                <button className='btn btn-success' onClick={this.backClick}>Trở về</button>
 
                 
                 {this.showSelectProduct()}
@@ -376,13 +376,13 @@ export default class Export extends React.Component{
                 <div className="card">
                     <div className='card-body'>
                         <div class="row">
-                            <div className="col-md-6">
+                            <div className="col-md-6 pr-2">
                                 <div className="form-group">
                                     <label>Xuất đến:</label>
                                     <textarea className="form-control" rows="2"></textarea>
                                 </div>
                             </div>
-                            <div className="col-md-6">
+                            <div className="col-md-6 pl-2">
                                 <div className="form-group">
                                     <label>Ghi chú:</label>
                                     <textarea className="form-control" rows="2"></textarea>
@@ -400,7 +400,7 @@ export default class Export extends React.Component{
                         style={{content:{marginLeft:270+'px',marginTop:70+'px'}}}
                     >
                         <div style={{marginBottom: 30+'px'}}>
-                                <h2 className='pull-left'>Select product</h2>
+                                <h2 className='pull-left'>Chọn sản phẩm</h2>
                                 <button className='pull-right btn' onClick={this.closeModal}>
                                     <i className='fa fa-close'></i>
                                 </button>
@@ -409,7 +409,7 @@ export default class Export extends React.Component{
                         <div style={{marginBottom: 30+'px'}}>
                             <form className="form-inline w-100">                
                                 <div className='input-prepend' style={{marginRight: 30+'px'}}>
-                                    <span className='add-on'>Name</span>
+                                    <span className='add-on'>Tên</span>
                                     <input
                                         type="text" className='form-control'
                                         onChange={e=>this.setState({productFilter:{...this.state.productFilter,name:e.target.value}})}
@@ -425,11 +425,11 @@ export default class Export extends React.Component{
                                 </div>
 
                                 <div className='input-prepend'>
-                                    <span className='add-on'>Category</span>
+                                    <span className='add-on'>Loại</span>
                                     <select className='from-control'
                                         onChange={e=>this.setState({productFilter:{...this.state.productFilter,category:e.target.value}})}
                                     >
-                                        <option value='all'>All</option>
+                                        <option value='all'>Tất cả</option>
                                         {this.state.productCategories.map((category,index)=>{
                                             return(
                                                 <option key={index} value={category.name}> {category.name} </option>
@@ -444,10 +444,10 @@ export default class Export extends React.Component{
                             <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th>Price</th>
-                                <th>createAt</th>
+                                <th>Tên</th>
+                                <th>Loại</th>
+                                <th>Giá</th>
+                                <th>Tạo Lúc</th>
                                 <th></th>
                             </tr>
                             </thead>

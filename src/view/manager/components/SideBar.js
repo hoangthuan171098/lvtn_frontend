@@ -24,10 +24,16 @@ class SideBar extends Component{
                                     <label>MANAGER</label>
                                 </li>
                                 <li class="nav-item">
+                                    <Link to="/manager/dashboard" class="nav-link"><span class="pcoded-micon"><i class="fa fa-home"></i></span><span class="pcoded-mtext">DASHBOARD</span></Link>
+                                </li>
+                                <li class="nav-item">
                                     <Link to="/manager/orders" class="nav-link"><span class="pcoded-micon"><i class="fa fa-navicon"></i></span><span class="pcoded-mtext">ĐƠN HÀNG</span></Link>
                                 </li>
                                 <li class="nav-item">
                                     <Link to="/manager/shipments" class="nav-link"><span class="pcoded-micon"><i class="fa fa-truck"></i></span><span class="pcoded-mtext">GIAO HÀNG</span></Link>
+                                </li>
+                                <li class="nav-item">
+                                    <Link to="/manager/customers" class="nav-link"><span class="pcoded-micon"><i class="fa fa-user"></i></span><span class="pcoded-mtext">KHÁCH HÀNG</span></Link>
                                 </li>
                                 <li class="nav-item">
                                     <Link to="/manager/warehouse" class="nav-link"><span class="pcoded-micon"><i class="fa fa-cubes"></i></span><span class="pcoded-mtext">KHO HÀNG</span></Link>

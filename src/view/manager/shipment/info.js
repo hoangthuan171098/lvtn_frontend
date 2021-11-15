@@ -59,7 +59,7 @@ class ShipmentInfo extends Component {
 		if(this.state.shipment.shipper){
 			return(
 				<div className='card'>
-					<div className='card-body'>
+					<div className='card-body-sm'>
 						<div className='row'>
 							<div className='w-50'>
 								<span className='impress'>SHIPPER:</span>
@@ -310,7 +310,7 @@ class ShipmentInfo extends Component {
 
 				<div className='float-right' style={{width: 20 + '%'}}>
 					<div className='card'>		
-						<div className='card-body'>
+						<div className='card-body-sm'>
 							<div className='row'>
 								<div className='w-50'>
 									<span className='impress'>NGƯỜI MUA:</span>
@@ -336,7 +336,7 @@ class ShipmentInfo extends Component {
 					{this.showShipper()}
 
 					<div className='card'>
-							<div className='card-body'>
+							<div className='card-body-sm'>
 								<div className='row'>
 									<div className='w-50'>
 										<span className='impress'>Cập nhật:</span>

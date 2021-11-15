@@ -12,7 +12,8 @@ class Shopcart extends Component {
       loading :true,
       authenticate: true,
       note: '',
-      productList: []
+      productList: [],
+      info: {}
     }
   }
 
@@ -23,27 +24,40 @@ class Shopcart extends Component {
       let itemList = JSON.parse(itemListString)
       this.setState({productList: itemList})
     }
+    let response2 = await fetch(process.env.REACT_APP_BACKEND_URL + "/customer-infos?customerId=" + Cookie.get('id') ,{
+			headers: {'Authorization':'bearer '+ Cookie.get('token')}
+		});
+    let data2 = await response2.json();
+    if(data2.length !== 0){
+			this.setState({info: data2[0]});
+		}
   }
 
 
   checkOutClick = () =>{
-      axios
-        .post(process.env.REACT_APP_BACKEND_URL + '/orders',{
-          status:'waiting',
-          productList : this.state.productList,
-          note:this.state.note,
-          buyer:Cookie.get('id')
-        },{
-          headers:{
-            'Authorization':'bearer '+ Cookie.get('token'),
+    axios
+      .post(process.env.REACT_APP_BACKEND_URL + '/orders',{
+        status:'waiting',
+        productList : this.state.productList,
+        note:this.state.note,
+        buyer:Cookie.get('id')
+      },{
+        headers:{
+          'Authorization':'bearer '+ Cookie.get('token'),
+        }
+      })
+      .then(response =>{
+        if(this.state.info){
+          if(this.state.info.street && this.state.info.wards && this.state.info.district && this.state.info.region){
+            this.props.history.push('/payment')
           }
-        })
-        .then(response =>{
-          window.location.href="/location"
-        })
-        .catch(err => {
-        })
-       
+        }
+        else{
+          this.props.history.push('/location')
+        }
+      })
+      .catch(err => {
+      })
   }
   updateMeterClick = (event,index) =>{
     let productList = this.state.productList

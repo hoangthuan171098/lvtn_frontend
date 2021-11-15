@@ -81,7 +81,7 @@ export default class Info extends React.Component{
                             <div className="row align-items-center">
                                 <div className="col-md-12 p-0">
                                     <div className="page-header-title">
-                                        <h5>DETAIL</h5>
+                                        <h5>CHI TIẾT</h5>
                                     </div>
                                 </div>
                             </div>
@@ -96,13 +96,13 @@ export default class Info extends React.Component{
                             <div className="col-sm-12 col-xl-8">
                                 <ul className="nav nav-tabs" id="myTab" role="tablist">
                                     <li className="nav-item">
-                                        <a className="nav-link active text-uppercase" id="have-tab" data-toggle="tab" href="#remain" role="tab" aria-controls="have" aria-selected="true">Ton kho</a>
+                                        <a className="nav-link active text-uppercase" id="have-tab" data-toggle="tab" href="#remain" role="tab" aria-controls="have" aria-selected="true">Tồn kho</a>
                                     </li>
                                     <li className="nav-item">
-                                        <a className="nav-link text-uppercase" id="import-tab" data-toggle="tab" href="#import" role="tab" aria-controls="import" aria-selected="false">Nhap</a>
+                                        <a className="nav-link text-uppercase" id="import-tab" data-toggle="tab" href="#import" role="tab" aria-controls="import" aria-selected="false">Nhập</a>
                                     </li>
                                     <li className="nav-item">
-                                        <a className="nav-link text-uppercase" id="export-tab" data-toggle="tab" href="#export" role="tab" aria-controls="export" aria-selected="false">Xuat</a>
+                                        <a className="nav-link text-uppercase" id="export-tab" data-toggle="tab" href="#export" role="tab" aria-controls="export" aria-selected="false">Xuất</a>
                                     </li>
                                 </ul>
                                 <div className="tab-content" id="myTabContent" style={{margin:0+'px'}}>
@@ -132,9 +132,9 @@ export default class Info extends React.Component{
                                         <table className="table">
                                             <thead className="brand-blue">
                                                 <tr>
-                                                    <th>Creator</th>
-                                                    <th>Time</th>
-                                                    <th>Quantity</th>
+                                                    <th>Người tạo</th>
+                                                    <th>Thời gian</th>
+                                                    <th>Số lượng</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -153,9 +153,9 @@ export default class Info extends React.Component{
                                                                         return(
                                                                             <p key={index1}>{item1.color + ': '}{item1.m ?
                                                                                 (item1.roll? 
-                                                                                    item1.m + ' x m,' + item1.roll + ' x roll'
+                                                                                    item1.m + ' x m,' + item1.roll + ' x cuộn'
                                                                                 : item1.m + ' x m')
-                                                                                :item1.roll + ' x roll'
+                                                                                :item1.roll + ' x cuộn'
                                                                             }
                                                                             </p>
                                                                         )
@@ -172,9 +172,9 @@ export default class Info extends React.Component{
                                         <table className="table">
                                             <thead className="brand-blue">
                                                 <tr>
-                                                    <th>Creator</th>
-                                                    <th>Time</th>
-                                                    <th>Quantity</th>
+                                                    <th>Người tạo</th>
+                                                    <th>Thời gian</th>
+                                                    <th>Số lượng</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -193,9 +193,9 @@ export default class Info extends React.Component{
                                                                         return(
                                                                             <p key={index1}>{item1.color + ': '}{item1.m ?
                                                                                 (item1.roll? 
-                                                                                    item1.m + ' x m,' + item1.roll + ' x roll'
+                                                                                    item1.m + ' x m,' + item1.roll + ' x cuộn'
                                                                                 : item1.m + ' x m')
-                                                                                :item1.roll + ' x roll'
+                                                                                :item1.roll + ' x cuộn'
                                                                             }
                                                                             </p>
                                                                         )
@@ -211,19 +211,19 @@ export default class Info extends React.Component{
                                 </div>
                             </div>
 
-                            <div className='col-xl-4'>
+                            <div className='col-xl-4 pl-4'>
                                 <div className='card'>
-                                    <div className="card-header">
-                                        <h5>Thong tin</h5>
+                                    <div className="card-header card-sm">
+                                        <h5>Thông Tin</h5>
                                     </div>
                         
-                                    <div className="card-body  text-center">
+                                    <div className="card-body-sm  text-center">
                                         <div className="user-image">
                                             <img src={process.env.REACT_APP_BACKEND_URL+this.state.product.product.image.url} className="wid-100 m-auto" alt="product image"/>
                                         </div>
                                         <h6 className="f-w-600 m-t-25 m-b-10">{this.state.product.product.name}</h6>
-                                        <p>{'Loai: ' + this.state.categories.filter(i=>i.id===this.state.product.product.category)[0].name}</p>
-                                        <p>{'Cap nhat: ' + this.state.product.updatedAt.slice(0,10)}</p>
+                                        <p>{'Loại: ' + this.state.categories.filter(i=>i.id===this.state.product.product.category)[0].name}</p>
+                                        <p>{'Cập nhật: ' + this.state.product.updatedAt.slice(0,10)}</p>
                                         <hr/>
                                         <p>{this.state.product.product.description}</p>
                                         <div className="bg-c-blue counter-block m-t-10 p-10">
@@ -235,7 +235,7 @@ export default class Info extends React.Component{
                                                     </h6>
                                                 </div>
                                                 <div className="col-6">
-                                                    <span className="text-white">CUON</span>
+                                                    <span className="text-white">CUỘN</span>
                                                     <h6 className="text-white mt-2 mb-0">{this.showTotalRoll()}</h6>
                                                 </div>
                                             </div>

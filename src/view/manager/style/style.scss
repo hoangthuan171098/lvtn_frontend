@@ -5,7 +5,6 @@
 
     background-color: #eff3f6;
     font-size: 14px !important;
-    font-family: "Mada", sans-serif;
     color: #686c71;
     font-weight: 400;
     background: #eff3f6;
@@ -185,6 +184,10 @@
         position: relative;
     }
 
+    .card-sm{
+        padding: 10px 15px !important;
+    }
+
     .card .card-header h5 {
         margin-bottom: 0;
         color: #111;
@@ -286,6 +289,10 @@
     .card .card-block,
     .card .card-body {
         padding: 20px 25px;
+    }
+
+    .card .card-body-sm {
+        padding: 10px 15px;
     }
 
     .card .card-block-big {

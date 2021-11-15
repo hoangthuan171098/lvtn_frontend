@@ -101,12 +101,12 @@ export default class ExportInfo extends React.Component{
                                 </div>
                             </div>
 
-                            <div className='col-4'>
+                            <div className='col-4 pl-4'>
                                 <div className='card'>
-                                    <div className='card-header'>
+                                    <div className='card-header card-sm'>
                                         <strong>THÔNG TIN:</strong>
                                     </div>
-                                    <div className='card-body'> 
+                                    <div className='card-body-sm'> 
                                         <strong>NGƯỜI TẠO:</strong><span>{this.state.export.creator.username}</span><br/>
                                         <strong>CẬP NHẬT:</strong><span>{this.showTimediff()}</span><br/>
                                         <strong>NGÀY XUẤT:</strong>
