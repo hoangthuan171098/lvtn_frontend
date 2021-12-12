@@ -1,15 +1,28 @@
 import React,{Component} from 'react'
 
 export default class Shipment extends Component{
+
+	confirmImg = () =>{
+		if(this.props.shipment.confirmImage){
+			return(
+				<>
+					<p>Hình ảnh xác nhận:</p>
+					<img src={process.env.REACT_APP_BACKEND_URL+this.props.shipment.confirmImage.url} className="m-auto" alt="confirm delivered"
+						style={{width:400+'px'}}/>
+				</>
+			)
+		}
+	}
+
     render(){
         return(
 			<div className='w-75 float-left Shipment-show'>
 				<div className='card'>
 					<div className='card-body'>
 						<div className='row'>
-							<span className='impress w-100'>Giao hàng #{this.props.shipIndex}</span><br/>
-							<span> ID: {this.props.shipment.id} -&ensp;</span>
-							<span>  {this.props.shipment.status}</span>
+							<span className='impress w-100'>Giao hàng #{this.props.shipIndex}</span>
+							<span> ID: {this.props.shipment.id} </span>
+							<span> Tình trạng:  {this.props.shipment.status}</span>
 							<table className='table'>
 								<thead>
 									<tr>
@@ -36,6 +49,7 @@ export default class Shipment extends Component{
 								})}
 								</tbody>
 							</table>
+							{this.confirmImg()}
 						</div>
 					</div>
 				</div>

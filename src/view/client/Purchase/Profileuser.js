@@ -301,6 +301,31 @@ class Profileuser extends Component {
     this.setState({ show: true });
   };
 
+  handleClickQr = () =>{
+    let newdebt = Number(this.state.info.debt) - Number(this.state.debtInput)
+    axios
+      .put(
+        process.env.REACT_APP_BACKEND_URL + "/customer-infos/" + this.state.info.id,
+        {
+          debt: newdebt
+        },
+        {
+          headers: {
+            Authorization: "bearer " + Cookie.get("token"),
+          },
+        }
+      )
+      .then((response) => {
+        alert("Thanh toán thành công");
+        this.handleClose()
+        this.componentDidMount()
+      })
+      .catch((error) => {
+        alert("Thanh toán thất bại !!!");
+        console.log("An error occurred:", error.response);
+      });
+  }
+
   onImageChange = (event) =>{
     if(event.target.files && event.target.files[0]){
       let reader = new FileReader();
@@ -597,7 +622,7 @@ class Profileuser extends Component {
                           TỔNG TIỀN : {total.toLocaleString("en")} VNĐ
                         </div>
                         <img  
-                            // onClick = {this.handleClickQr}
+                            onClick = {this.handleClickQr}
                             style = {{cursor:"pointer",height:400 + 'px'}}
                             src="https://cdn.printgo.vn/uploads/media/790919/tao-ma-qr-code-san-pham-1_1620927223.jpg" alt="" />
                       </div>

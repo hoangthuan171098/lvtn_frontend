@@ -125,23 +125,15 @@ export default class Listorder extends Component {
                 <Link className="page-link">Previous</Link>
               </li> */}
               {pageNumber.map((number)=>{
-                    return(
-                      <li className="page-ite" style={{cursor:"pointer"}}>
-                        <a href onClick={() => this.paginate(number)} className="page-link">
-                          {number}
-                        </a>
-                      </li>
-                    )
-                  })}
-             
-              
-              {/* <li class="page-item">
-                <a class="page-link">2</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link">3</a>
-              </li>
-              <li class="page-item">
+                return(
+                  <li className="page-ite" style={{cursor:"pointer"}}>
+                    <a href onClick={() => this.paginate(number)} className="page-link">
+                      {number}
+                    </a>
+                  </li>
+                )
+              })}
+              {/*
                 <a class="page-link">Next</a>
               </li> */}
             </ul>

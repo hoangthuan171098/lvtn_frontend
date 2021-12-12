@@ -149,7 +149,7 @@ class List extends Component{
 
 
                             <div className={!this.state.itemFilter.show? "d-none" : "row" }>
-                                <div className='col-4'>
+                                <div className='col-4 m-r-20'>
                                     <div className="input-group mb-3">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text" id="basic-addon1">Name</span>

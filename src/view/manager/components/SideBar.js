@@ -39,6 +39,9 @@ class SideBar extends Component{
                                     <Link to="/manager/warehouse" class="nav-link"><span class="pcoded-micon"><i class="fa fa-cubes"></i></span><span class="pcoded-mtext">KHO HÀNG</span></Link>
                                 </li>
                                 <li class="nav-item">
+                                    <Link to="/manager/products" class="nav-link"><span class="pcoded-micon"><i class="fa fa-cube"></i></span><span class="pcoded-mtext">SẢN PHẨM</span></Link>
+                                </li>
+                                <li class="nav-item">
                                     <Link to="/manager/chat" class="nav-link"><span class="pcoded-micon"><i class="fa fa-comments"></i></span><span class="pcoded-mtext">CHAT</span></Link>
                                 </li>
                             </ul>

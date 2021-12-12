@@ -1,17 +1,14 @@
-.AdminAccount{
+.ManagerCustomer{
 
     select{
         margin: 0;
     }
 
-    
     label{
         margin-bottom: 10px;
         font-size: 15px;
         font-weight: bolder !important;
     }
-
-
 
     input{
         border-radius: 0% !important;
@@ -23,9 +20,8 @@
     }
 
     form{
-        padding: 22px 10px 10px 10px;
+        padding: 5px 10px 10px 5px;
         background-color: white;
-        margin-top: 20px;
     }
 
     .form-group{
@@ -37,9 +33,6 @@
 
 
     .Create{
-        width: 80%;
-        margin: auto;
-
         .btn{
             min-height: 35px;
         }

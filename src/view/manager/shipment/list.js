@@ -9,7 +9,7 @@ class ShipmentList extends Component{
         super(props)
         this.state={
             loading: true,
-            filter: {},
+            filter: {id:'',buyer:'',status:'all'},
             shipments: []
         }
     }
@@ -34,6 +34,10 @@ class ShipmentList extends Component{
         this.props.history.push('/manager/shipments/' + id)
     }
 
+    resetFilterClick = () =>{
+        this.setState({filter:{id:'',buyer:'',status:'all'}})
+    }
+
     render(){
         return(
             <div className='ShipmentManager'>
@@ -51,13 +55,41 @@ class ShipmentList extends Component{
 
                 <div className='card'>
                     <div className='card-body'>
-                        <select onChange={(e)=>this.setState({filter:{...this.state.filter,status: e.target.value}})}>
-                            <option value='all'>Tất cả</option>
-                            <option value='waiting to deliver'>Chờ giao</option>
-                            <option value='delivering'>Đang giao</option>
-                            <option value='delivered'>Đã giao</option>
-                            <option value='cancled'>Hủy</option>
-                        </select>
+
+                        <div className="DataList-filter">
+                            <form className="form-inline w-100 m-b-10">
+                                <div className='controls'>
+                                    <div className='input-prepend'>
+                                        <span className='add-on'>Trạng thái</span>
+                                        <select onChange={(e)=>this.setState({filter:{...this.state.filter,status: e.target.value}})}>
+                                            <option value='all'>Tất cả</option>
+                                            <option value='waiting to deliver'>Chờ giao</option>
+                                            <option value='delivering'>Đang giao</option>
+                                            <option value='delivered'>Đã giao</option>
+                                            <option value='cancled'>Hủy</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className='controls m-l-20'>
+                                    <div className='input-prepend'>
+                                        <span className='add-on'>ID</span>
+                                        <input name="gmail_filter" type="text"
+                                            onChange={(e)=>this.setState({filter:{...this.state.filter,id: e.target.value}})}/>
+                                    </div>
+                                </div>
+                                <div className='controls m-l-20'>
+                                    <div className='input-prepend'>
+                                        <span className='add-on'>Người mua</span>
+                                        <input name="gmail_filter" type="text"
+                                            onChange={(e)=>this.setState({filter:{...this.state.filter,buyer: e.target.value}})}/>
+                                    </div>
+                                </div>
+                                
+                                <button type="reset" className='btn btn-primary m-l-10' style={{marginBottom:0}}
+                                    onClick={this.resetFilterClick} >Reset</button>
+                            </form>
+                        </div>
+
                         <table className="table list-table">
                             <thead>
                             <tr>
@@ -69,7 +101,14 @@ class ShipmentList extends Component{
                             </tr>
                             </thead>
                             <tbody>
-                                {this.state.shipments.map((shipment, index) => {
+                                {this.state.shipments
+                                .filter(shipment=>
+                                    shipment.id.includes(this.state.filter.id)
+                                    && shipment.buyer.username.includes(this.state.filter.buyer)
+                                    && (this.state.filter.status === 'all'
+                                    || shipment.status === this.state.filter.status)
+                                )
+                                .map((shipment, index) => {
                                 return (
                                     <tr key={index}>
                                         <td onClick={()=>this.infoClick(shipment.id)}>{shipment.id}</td>

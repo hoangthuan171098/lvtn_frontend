@@ -3162,6 +3162,11 @@ main{
   color:#428bca;
 }
 
+.select-warn{
+  color:#df1414;
+  cursor: pointer;
+}
+
 .select-able{
   color:#428bca;
   cursor: pointer;
@@ -3170,5 +3175,21 @@ main{
 /* font */
 
 .fsize-12{
-  font-size: 12px;
+  font-size: 12px !important;
+}
+
+.fsize-14{
+  font-size: 14px !important;
+}
+
+.fsize-16{
+  font-size: 16px !important;
+}
+
+.fsize-18{
+  font-size: 18px !important;
+}
+
+.fsize-20{
+  font-size: 20px !important;
 }

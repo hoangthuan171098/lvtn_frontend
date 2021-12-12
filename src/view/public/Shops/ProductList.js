@@ -60,7 +60,6 @@ class ProductList extends Component {
           return val.name.toLowerCase().indexOf(search) !== -1;
         })  
     }
-    console.log(products)
     return (
       <div className="app__container">
         <div className="grid wide">

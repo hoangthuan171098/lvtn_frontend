@@ -86,7 +86,7 @@ class AccountList extends Component {
                                         </div>
                                     </div>
 
-                                    <div className='controls'>
+                                    <div className='controls m-l-20'>
                                         <div className='input-prepend'>
                                             <span className='add-on'>Gmail</span>
                                             <input name="gmail_filter" type="text" 
@@ -95,7 +95,7 @@ class AccountList extends Component {
                                         </div>
                                     </div>
                                     
-                                    <button type="reset" className='btn btn-success'
+                                    <button type="reset" className='btn btn-primary m-l-10' style={{marginBottom:0}}
                                     onClick={ ()=>this.setState({filter_email:'',filter_username:''})} >Reset</button>
                                 </form>
                             </div>

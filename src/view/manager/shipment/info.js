@@ -47,6 +47,13 @@ class ShipmentInfo extends Component {
 		this.setState({ loading: false, shipment: data });
 	}
 
+	selectShipper = (shipper) =>{
+		let index = this.state.users.findIndex(i=>i.username===shipper)
+		let id = this.state.users[index].id
+		console.log(id)
+		this.setState({shipper:id})
+	}
+
 	openModal = () =>{
 		this.setState({openModal:true})
 	}
@@ -85,14 +92,14 @@ class ShipmentInfo extends Component {
 						<div className="form-group">
 						<label> Người giao: </label>
 						<input type='text' className='row-fluid' list='user-list'
-							onChange={e=>this.setState({shipper:e.target.value})}
+							onChange={e=>this.selectShipper(e.target.value)}
 						/>
 						<datalist id='user-list'>
 							{this.state.users
 							.filter(user=>user.username.includes(this.state.shipper) && user.role.name==='Shipper')
 							.map((user,index)=>{
 								return(
-									<option value={user.id} key={index}>{user.username}</option>
+									<option value={user.username} key={index}>{user.username}</option>
 								)
 							})}
 						</datalist>

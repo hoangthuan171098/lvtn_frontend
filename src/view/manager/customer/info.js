@@ -19,7 +19,7 @@ class AccountInfo extends Component {
 			modal:{
 				info: false,
 				address: false,
-				debt: false,
+				debt: false
 			},
 			changeInfo:{},changeUser:{}
 		}
@@ -130,6 +130,33 @@ class AccountInfo extends Component {
 		this.closeDebtModal()
 		this.componentDidMount()
 
+	}
+
+	chatUser = () =>{
+		this.props.history.push('/manager/chat?to='+this.state.user.id)
+	}
+
+	blockUser = async () =>{
+		let action
+		if(this.state.user.blocked){
+			action='mở khóa'
+		}
+		else action='khóa'
+		if(window.confirm('Bạn có chắc chắn muốn ' + action + ' không?')){
+			await axios
+				.put(process.env.REACT_APP_BACKEND_URL + "/users/" + this.props.match.params.id,{
+					blocked: !this.state.user.blocked
+				},{
+					headers: {'Authorization':'bearer '+ Cookie.get('token')}
+				})
+				.then(()=>{
+					toast.success(action + ' tài khoản thành công.')
+					this.componentDidMount()
+				})
+				.catch(()=>{
+					toast.error('Đã xãy ra lỗi.')
+				})
+		}
 	}
 
 	openAddressModal = () =>{
@@ -279,6 +306,7 @@ class AccountInfo extends Component {
 								<div className="col-md-12 p-0">
 									<div className="page-header-title">
 										<h5>THÔNG TIN TÀI KHOẢN</h5>
+										ID: {this.state.user.id}
 									</div>
 								</div>
 							</div>
@@ -298,7 +326,14 @@ class AccountInfo extends Component {
 												<strong>{this.state.user.username}</strong>
 											</span>
 										</div>
+										<div className='d-flex align-items-center'>
+											<i className='fa fa-comments select-able fsize-20' onClick={this.chatUser}></i>
+											<i className={this.state.user.blocked?'fa fa-unlock-alt select-warn fsize-20 m-l-5'
+												:'fa fa-lock select-warn fsize-20 m-l-5'}
+												onClick={this.blockUser}></i>
+										</div>
 									</div>
+									<hr />
 									<div className='row'>
 										<div className='col-4'>
 											<p className='text-center mb-0'>Đơn hàng gần nhất</p>
@@ -370,7 +405,7 @@ class AccountInfo extends Component {
 						<div className='float-right' style={{width:35+'%'}}>
 							<div className='card'>
 								<div className='card-body-sm'>
-									<h6>Thông tin <span className='fa fa-pencil select-able' onClick={this.openInfoModal}></span> </h6>
+									<h6>Thông tin <i className='fa fa-pencil select-able' onClick={this.openInfoModal}></i> </h6>
 									<hr/>
 									<div className='row'>
 										<div className='w-25'>Email:</div>

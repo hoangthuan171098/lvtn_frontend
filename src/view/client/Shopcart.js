@@ -97,9 +97,14 @@ class Shopcart extends Component {
     event.preventDefault()
     let productList = this.state.productList
     productList.splice(index,1)
-    this.setState({productList:productList})
-    console.log(this.state.productList)
-    Cookie.set('cart',JSON.stringify(productList))
+    if(productList.length === 0){
+      this.setState({productList:productList})
+      Cookie.remove('cart')
+    }
+    else{
+      this.setState({productList:productList})
+      Cookie.set('cart',JSON.stringify(productList))
+    }
   }
   
   render() {
@@ -150,16 +155,15 @@ class Shopcart extends Component {
                     </td>
                     <td className="text-center">
                       <div className="count-input" >
-                        <input type="number" style={{ width: 110 + "px", textAlign:"center"}} pattern="[1-9][0-9]*" defaultValue={(item.quantity).toLocaleString('en')}
+                        <input type="number" style={{ width: 110 + "px", textAlign:"center"}} pattern="[1-9][0-9]*" defaultValue={item.quantity}
                           onBlur = {(e) =>this.updateProductClick(e,index)}
-                          
                          />
                       </div>
                     </td>
                     <td className="text-center">
                       <div className="count-input">
                       
-                        <input type="number" style={{ width: 110 + "px", textAlign:"center"}} defaultValue={(item.quantity_m*1).toLocaleString('en')}
+                        <input type="number" style={{ width: 110 + "px", textAlign:"center"}} defaultValue={item.quantity_m}
                            onBlur = {(e) =>this.updateMeterClick(e,index)}
                          />
                         

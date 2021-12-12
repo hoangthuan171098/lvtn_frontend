@@ -9,7 +9,8 @@ class OrderManager extends Component{
         super(props)
         this.state={
             loading: true,
-            filter: {},
+            filter: {id:'',status:'all',buyer:''},
+            page: {now:1,max:1,perPage:5},
             orders: []
         }
     }
@@ -22,7 +23,8 @@ class OrderManager extends Component{
                 }
             })
             .then(res=>{
-                this.setState({orders:res.data})
+                let max = Math.ceil(res.data.length/this.state.page.perPage)
+                this.setState({orders:res.data,page:{...this.state.page,max: max}})
             })
             .catch(err=>{
                 console.log('Cannot connect to server')
@@ -32,6 +34,44 @@ class OrderManager extends Component{
 
     infoClick = (id) =>{
         this.props.history.push('/manager/orders/' + id)
+    }
+
+    resetFilterClick = () =>{
+        this.setState({filter:{id:'',buyer:'',status:'all'}})
+    }
+
+    changePage = (number) =>{
+        console.log(number)
+        this.setState({page:{...this.state.page,now: number}})
+    }
+
+    showPageNumber = () =>{
+        let pageList = []
+        for(let i=1; i <= this.state.page.max; i++){
+            pageList[i]=i
+        }
+        return(
+            <ul class="pagination pg-blue">
+                {pageList.map((page,index)=>{
+                    if(page===this.state.page.now){
+                        return(
+                            <li className="page-ite" style={{cursor:"pointer"}} key={index}
+                            onClick={(e)=>this.changePage(page)}>
+                                <a href className="page-link"
+                                style={{backgroundColor:'blue'}}>{page}</a>
+                            </li>
+                        )
+                    }
+                    return(
+                        <li className="page-ite" style={{cursor:"pointer"}} key={index}
+                        onClick={(e)=>this.changePage(page)}>
+                            <a href className="page-link">{page}</a>
+                        </li>
+                    )
+                })}
+            </ul>
+        )
+        
     }
 
     render(){
@@ -51,19 +91,43 @@ class OrderManager extends Component{
 
                 <div className='card'>
                     <div className='card-body'>
-                        <div className='module-option'>
-                            <select onChange={(e)=>this.setState({filter:{...this.state.filter,status: e.target.value}})}>
-                                <option value='all'>Tất cả</option>
-                                <option value='waiting'>Đang chờ</option>
-                                <option value='processing'>Đang xử lý</option>
-                                <option value='waiting to deliver'>Đợi giao hàng</option>
-                                <option value='delivering'>Đang giao</option>
-                                <option value='delivered'>Đã giao</option>
-                                <option value='partial delivering'>Đang giao một phần</option>
-                                <option value='partial delivered'>Đã giao một phần</option>
-                                <option value='done'>Hoàn tất</option>
-                                <option value='cancled'>Hủy</option>
-                            </select>
+                        <div className="DataList-filter">
+                            <form className="form-inline w-100 m-b-10">
+                                <div className='controls'>
+                                    <div className='input-prepend'>
+                                        <span className='add-on'>Trạng thái</span>
+                                        <select onChange={(e)=>this.setState({filter:{...this.state.filter,status: e.target.value}})}>
+                                            <option value='all'>Tất cả</option>
+                                            <option value='waiting'>Đang chờ</option>
+                                            <option value='processing'>Đang xử lý</option>
+                                            <option value='waiting to deliver'>Đợi giao hàng</option>
+                                            <option value='delivering'>Đang giao</option>
+                                            <option value='delivered'>Đã giao</option>
+                                            <option value='partial delivering'>Đang giao một phần</option>
+                                            <option value='partial delivered'>Đã giao một phần</option>
+                                            <option value='done'>Hoàn tất</option>
+                                            <option value='cancled'>Hủy</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className='controls m-l-20'>
+                                    <div className='input-prepend'>
+                                        <span className='add-on'>ID</span>
+                                        <input name="gmail_filter" type="text"
+                                            onChange={(e)=>this.setState({filter:{...this.state.filter,id: e.target.value}})}/>
+                                    </div>
+                                </div>
+                                <div className='controls m-l-20'>
+                                    <div className='input-prepend'>
+                                        <span className='add-on'>Người mua</span>
+                                        <input name="gmail_filter" type="text"
+                                            onChange={(e)=>this.setState({filter:{...this.state.filter,buyer: e.target.value}})}/>
+                                    </div>
+                                </div>
+                                
+                                <button type="reset" className='btn btn-primary m-l-10' style={{marginBottom:0}}
+                                    onClick={this.resetFilterClick}>Reset</button>
+                            </form>
                         </div>
 
                         <table className="table list-table">
@@ -78,6 +142,12 @@ class OrderManager extends Component{
                             </thead>
                             <tbody>
                                 {this.state.orders
+                                .filter(order =>
+                                    order.id.includes(this.state.filter.id)
+                                    && order.buyer.username.includes(this.state.filter.buyer)
+                                    && (this.state.filter.status === 'all'
+                                    || order.status === this.state.filter.status)
+                                )
                                 .sort((a,b)=>(new Date(b.updatedAt.slice(0,19)+'Z')) - (new Date(a.updatedAt.slice(0,19)+'Z')))
                                 .map((order, index) => {
                                 return (
@@ -109,6 +179,9 @@ class OrderManager extends Component{
                                 })}
                             </tbody>
                         </table>
+                        <nav aria-label="Page navigation example">
+                            {this.showPageNumber()}
+                        </nav>
                     </div>
                 </div>
             </div>

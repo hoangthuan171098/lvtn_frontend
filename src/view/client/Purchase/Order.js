@@ -13,7 +13,6 @@ import Profileuser from "./Profileuser";
 import ChangePass from "./ChangePass";
 export default class Order extends Component {
   render() {
-    
     return (
       <div className="container-fluid">
           <div className="container_layout">

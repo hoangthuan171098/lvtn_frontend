@@ -2,6 +2,7 @@ import React from "react"
 import Cookie from 'js-cookie'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import queryString from 'query-string';
 
 export default class ManagerChat extends React.Component{
 	constructor(props){
@@ -17,15 +18,28 @@ export default class ManagerChat extends React.Component{
 
 	async componentDidMount(){
 		this.myInterval = setInterval(() => this.getChatData(),1000)
-		if(!Cookie.get('token')){
-				return
+		if(this.props.location.search){
+			let params = queryString.parse(this.props.location.search)
+			if(params.to){
+				await axios
+					.get(process.env.REACT_APP_BACKEND_URL + '/users/'+params.to,
+					{
+						headers: {'Authorization':'bearer '+ Cookie.get('token')}
+					})
+					.then(res=> {
+						this.setState({user:res.data})
+					})
+					.catch(error => {
+						toast.error('Đã xảy ra lỗi');
+					});
+			}
 		}
 		await axios
 			.get(process.env.REACT_APP_BACKEND_URL + '/chats',
 			{
-					headers: {
-							'Authorization':'bearer '+ Cookie.get('token'),
-					},
+				headers: {
+					'Authorization':'bearer '+ Cookie.get('token'),
+				},
 			})
 			.then(res=> {
 				let chats = res.data
@@ -44,8 +58,8 @@ export default class ManagerChat extends React.Component{
 				this.setState({chats:res.data,userList:data})
 			})
 			.catch(error => {
-					toast.error('Cannot connect to chat');
-					console.log('An error occurred:', error.response);
+				toast.error('Cannot connect to chat');
+				console.log('An error occurred:', error.response);
 			});
 		return
 	}
@@ -57,13 +71,13 @@ export default class ManagerChat extends React.Component{
 	getChatData = async () =>{
 		this.scrollToBottom()
 		if(!Cookie.get('token')){
-				return
+			return
 		}
 		await axios
 			.get(process.env.REACT_APP_BACKEND_URL + '/chats',{
-					headers: {
-							'Authorization':'bearer '+ Cookie.get('token'),
-					},
+				headers: {
+					'Authorization':'bearer '+ Cookie.get('token'),
+				},
 			})
 			.then(res=> {
 				let chats = res.data
@@ -101,7 +115,7 @@ export default class ManagerChat extends React.Component{
 				type: 'assist'
 			},{
 				headers: {
-						'Authorization':'bearer '+ Cookie.get('token'),
+					'Authorization':'bearer '+ Cookie.get('token'),
 				},
 			})
 			.then(res=> {
@@ -221,14 +235,16 @@ export default class ManagerChat extends React.Component{
 								</div>
 
 								<div className={this.state.user.username? "ml-4 form-group mt-3 mb-0":'d-none'}>
-									<textarea className="form-control" rows={2} placeholder="Type your message here..." style={{width:85+"%"}}
-										value={this.state.message} onChange={(e)=>this.setState({message:e.target.value})} />
-									
-									<a className="publisher-btn text-info" href="#" data-abc="true"
-										onClick={e=>this.sendMessageClick(e)}
-									>
-										<i className="fa fa-paper-plane" />
-									</a>
+									<div className='d-flex align align-items-center justify-content-between'>
+										<textarea className="form-control" rows={2} placeholder="Type your message here..." style={{width:85+"%"}}
+											value={this.state.message} onChange={(e)=>this.setState({message:e.target.value})} />
+
+										<a className="publisher-btn text-info m-r-20" href="#" data-abc="true"
+											onClick={e=>this.sendMessageClick(e)}
+										>
+											<i className="fa fa-paper-plane fsize-20" />
+										</a>
+									</div>
 								</div>
 
 								</div>
