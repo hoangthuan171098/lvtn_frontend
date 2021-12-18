@@ -22,12 +22,7 @@ class ProductList extends Component {
 
   async componentDidMount() {
     let response2 = await fetch(
-      process.env.REACT_APP_BACKEND_URL + "/product-categories",
-      {
-        headers: {
-          Authorization: "bearer " + Cookie.get("token"),
-        },
-      }
+      process.env.REACT_APP_BACKEND_URL + "/product-categories"
     );
     if (!response2.ok) {
       return;

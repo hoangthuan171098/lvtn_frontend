@@ -180,7 +180,7 @@ class OrderManager extends Component{
                             </tbody>
                         </table>
                         <nav aria-label="Page navigation example">
-                            {this.showPageNumber()}
+                            {/* {this.showPageNumber()} */}
                         </nav>
                     </div>
                 </div>
