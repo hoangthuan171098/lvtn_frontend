@@ -435,7 +435,7 @@ export default class List extends Component {
           </Link>
         </div>
 
-        <div className="col-xl-4 col-lg-5">
+        {/* <div className="col-xl-4 col-lg-5">
           <label>Số lượng vải trong kho</label>
           <Doughnut
             data={{
@@ -460,7 +460,7 @@ export default class List extends Component {
               },
             }}
           />
-        </div>
+        </div> */}
       </div>
     );
   }

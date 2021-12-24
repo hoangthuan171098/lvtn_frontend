@@ -146,10 +146,10 @@ class ProductList extends Component {
                           </h4>
                           <div className="home-product-item__price">
                             <span className="home-product-item__price-old">
-                            {parseInt(product.price) + 200}$         
+                            {parseInt(product.price)} VNĐ  
                             </span>
                             <span className="home-product-item__price-current">
-                              {product.price}$
+                              {product.price} VNĐ
                             </span>
                           </div>
                           <div className="home-product-item__action">
@@ -202,6 +202,16 @@ class ProductList extends Component {
                   </a>
                 </li>
                 {pageNumber.map((number)=>{
+                  if(number !== this.state.currentpage){
+                    return(
+                      <li className="pagination-item pagination-item--active" style={{border:'solid 1px',cursor:'pointer'}}>
+                        <a href onClick={() => this.paginate(number)} className="pagination-item__link"
+                          style={{backgroundColor:'white',color:'black',fontSize:14 + 'px'}}> 
+                          {number}
+                        </a>
+                      </li>
+                    )
+                  }
                   return(
                     <li className="pagination-item pagination-item--active"  style={{cursor:"pointer",fontSize:14 + 'px'}}>
                       <a href onClick={() => this.paginate(number)} className="pagination-item__link" style={{fontSize:14 + 'px'}}> 

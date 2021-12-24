@@ -168,31 +168,33 @@ class Profileuser extends Component {
   };
   handleSubmit = async (event) => {
     event.preventDefault();
-    if (this.state.info.id) {
-
+    if (this.state.images.length !== 0) {
       const formData = new FormData();
-    
-        Array.from(this.state.images).forEach(image => {
-          formData.append('files', image);
-        });
+      Array.from(this.state.images).forEach(image => {
+        formData.append('files', image);
+      });
 
-        formData.append('ref','user');
-        formData.append('refId',this.state.user.id);
-        formData.append('field','avatar');
-        formData.append('source', 'users-permissions');
-    
+      formData.append('ref','user');
+      formData.append('refId',this.state.user.id);
+      formData.append('field','avatar');
+      formData.append('source', 'users-permissions');
+
+      if(this.state.user.avatar && this.state.user.avatar.id){
         await axios
-          .post(`http://localhost:1337/upload`, formData, {
+          .delete(`http://localhost:1337/upload/files/`+this.state.user.avatar.id , {
             headers: { 'Content-Type': 'multipart/form-data','Authorization':'bearer '+ Cookie.get('token') },
           })
-          .then(res => {
-            console.log(res);
-            alert('Thêm avatar thành công!')
-          })
-          .catch(err => {
-            console.log(err.response);
-            alert('Thêm avatar thất bại!')
-        });
+      }
+  
+      await axios
+        .post(`http://localhost:1337/upload`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data','Authorization':'bearer '+ Cookie.get('token') },
+        })
+        .then(res => {
+        })
+        .catch(err => {
+          console.log(err.response)
+      });
       axios
         .put(
           process.env.REACT_APP_BACKEND_URL +
@@ -215,6 +217,7 @@ class Profileuser extends Component {
           }
         )
         .then((response) => {
+          alert('Cập nhật thông tin thành công!')
           this.props.history.push(`/purchase/profile`);
         })
         .catch((error) => {
@@ -328,6 +331,7 @@ class Profileuser extends Component {
 
   onImageChange = (event) =>{
     if(event.target.files && event.target.files[0]){
+      this.setState({images:event.target.files})
       let reader = new FileReader();
       reader.onload = (e) =>{
         this.setState({profileimage:e.target.result});
@@ -336,8 +340,12 @@ class Profileuser extends Component {
     }
   }
   render() {
+    console.log(this.state.imgURL)
     var total = this.state.debtInput
     var image = "https://cf.shopee.vn/file/059dfcece821ff6afb80ef012dfa2447";
+    if(this.state.imgURL){
+      image = process.env.REACT_APP_BACKEND_URL + this.state.imgURL
+    }
     if (!this.state.loading && Cookie.get("token")) {
       return (
         <div className="Account_layout">
@@ -487,20 +495,7 @@ class Profileuser extends Component {
                     className="TgSfgo"
                     style={{ backgroundImage: `url(${this.state.profileimage !== "" ? this.state.profileimage :  image})`}}
                   ></div>
-                  {/* <Avatar size={64} icon="user" src={this.state.profileimage} /> */}
                 </div>
-                {/* <input
-                  className="_2xS5eV"
-                  type="file"
-                  accept=".jpg,.jpeg,.png"
-                  onChange={e=>this.setState({images:e.target.files})}
-                /> */}
-                {/* <button
-                  type="button"
-                  className="btn btn-light btn--m btn--inline"
-                >
-                  Chọn ảnh
-                </button> */}
                 <input type="file" name="file" id="file" className="inputfile" onChange={this.onImageChange}/>
                 <label for="file" style={{padding:2 + 'px'}}>Chọn ảnh</label>
                 <div className="_3Jd4Zu">

@@ -110,19 +110,19 @@ export default class Checkout extends Component {
                           Product <span>Total</span>
                         </li>
                         <li className="fw-normal">
-                          Combination x 1 <span>$60.00</span>
+                          Combination x 1 <span>60.000 VNĐ</span>
                         </li>
                         <li className="fw-normal">
-                          Combination x 1 <span>$60.00</span>
+                          Combination x 1 <span>60.000 VNĐ</span>
                         </li>
                         <li className="fw-normal">
-                          Combination x 1 <span>$120.00</span>
+                          Combination x 1 <span>120.000 VNĐ</span>
                         </li>
                         <li className="fw-normal">
-                          Subtotal <span>$240.00</span>
+                          Subtotal <span>240.000 VNĐ</span>
                         </li>
                         <li className="total-price">
-                          Total <span>$240.00</span>
+                          Total <span>240.00 VNĐ</span>
                         </li>
                       </ul>
                       <div className="payment-check">

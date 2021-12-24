@@ -247,7 +247,7 @@ export default class Addressorder extends Component {
                                     id
                                     className="btn btn-lg btn-block "
                                   >
-                                    PURCHASE $37 SEK
+                                    PURCHASE 37 VNĐ SEK
                                   </button>{" "}
                                 </div>
                               </div>

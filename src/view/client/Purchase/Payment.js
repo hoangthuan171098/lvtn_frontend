@@ -544,13 +544,13 @@ class Payment extends Component {
                 <div className="price-info">
                   <div className="inner">
                     <div className="name ">Tạm tính</div>
-                    <div className="value ">{total}$</div>
+                    <div className="value ">{total}VNĐ</div>
                   </div>
                 </div>
 
                 <div className="total">
                   <div class="name">Thành tiền:</div>
-                  <div className="value">{total} $</div>
+                  <div className="value">{total}VNĐ</div>
                 </div>
               </div>
             </div>

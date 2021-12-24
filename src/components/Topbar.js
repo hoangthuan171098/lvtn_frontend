@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import Cookie from "js-cookie";
+import axios from 'axios'
 class Topbar extends Component {
   constructor(props) {
     super(props);
@@ -12,6 +13,7 @@ class Topbar extends Component {
       authenticate: true,
       note: "",
       productList: [],
+      notifications: []
     };
   }
   logoutHandle = async (e) => {
@@ -19,7 +21,38 @@ class Topbar extends Component {
     this.props.logout();
     this.props.history.push("/login");
   };
+
+  getData = async ()=>{
+		await axios
+      .get(process.env.REACT_APP_BACKEND_URL + '/notifications?to='+Cookie.get('id'),{
+          headers: {
+              'Authorization':'bearer '+ Cookie.get('token'),
+          }
+      })
+      .then(res=>{
+          this.setState({notifications: res.data})
+      })
+	}
+
+  allReadClick = (event) =>{
+    event.preventDefault()
+    for(let i=0;i < this.state.notifications.length; i++){
+      if(!this.state.notifications[i].isread){
+        axios
+          .put(process.env.REACT_APP_BACKEND_URL + '/notifications/' + this.state.notifications[i].id,{
+            isread: true
+          },{
+              headers: {
+                'Authorization':'bearer '+ Cookie.get('token'),
+              }
+          })
+      }
+    }
+  }
+  
   async componentDidMount() {
+    this.getData()
+    this.myInterval = setInterval(() => this.getData(),4000)
     if (Cookie.get("cart")) {
       let itemListString = Cookie.get("cart");
 
@@ -31,6 +64,17 @@ class Topbar extends Component {
       this.setState({ productList: [] });
     }
   }
+
+  componentWillUnmount(){
+		clearInterval(this.myInterval)
+	}
+
+  numberOfNotifications = () =>{
+    let result = 0
+    result = this.state.notifications.filter(item=>!item.isread).length
+    return this.state.notifications.filter(item=>!item.isread).length
+  }
+
   More = () => {
     if (Cookie.get("username")) {
       if (Cookie.get("role") === "Admin") {
@@ -183,31 +227,41 @@ class Topbar extends Component {
               <li className="header__navbar-item header__navbar-item--has-notify">
                 <a href className="header__navbar-item-link">
                   <i className="header__navbar-icon far fa-bell" />
+                  <span className="header__cart-notice" style={{position:"initial"}}>
+                    {this.state.notifications.filter(item=>!item.isread).length}
+                  </span>
                   Thông báo
                 </a>
                 <div className="header__notify">
                   <header className="header__notify-header">
-                    <h3>Thông báo mới nhận</h3>
+                    <h3>Thông báo mới nhận 
+                      <span style={{color:'blue',cursor:'pointer'}}
+                      onClick={(event)=>this.allReadClick(event)}
+                      >Đọc tất cả</span>
+                    </h3>
                   </header>
                   <ul className="header__notify-list">
-                    <li className="header__notify-item">
-                      <a href className="header__notify-link">
-                        <img
-                          src="https://img.tickid.vn/photos/resized/200x120/83-1580794352-myphamohui-lgvina.png"
-                          alt=""
-                          className="header__notify-img"
-                        />
-                        <div className="header__notify-info">
-                          <span className="header__notify-name">
-                            Xác thực chính hãng nguồn gốc các sản phẩm Ohui
-                          </span>
-                          <span className="header__notify-description">
-                            Xác thực chính hãng nguồn gốc các sản phẩm Ohui
-                          </span>
-                        </div>
-                      </a>
-                    </li>
-                    <li className="header__notify-item">
+                    {this.state.notifications
+                    .sort((a,b)=>(new Date(b.updatedAt.slice(0,19)+'Z')) - (new Date(a.updatedAt.slice(0,19)+'Z')))
+                    .slice(0,6)
+                    .map((notification,index)=>{
+											return(
+                        <li className={notification.isread? "header__notify-item":"header__notify-item gray-bg"}>
+                          <a href className="header__notify-link">
+                            <div className="header__notify-info">
+                              <span className="header__notify-name">
+                                <strong>{notification.title}</strong>
+                              </span>
+                              <span className="header__notify-description">
+                                {notification.content}
+                              </span>
+                            </div>
+                          </a>
+                        </li>
+											)
+										})}
+
+                    {/* <li className="header__notify-item">
                       <a href className="header__notify-link">
                         <img
                           src="https://img.tickid.vn/photos/resized/200x120/83-1576046204-myphamohui-lgvina.png"
@@ -224,7 +278,7 @@ class Topbar extends Component {
                           </span>
                         </div>
                       </a>
-                    </li>
+                    </li> */}
                   </ul>
                   <div className="header__notify-footer">
                     <a href className="header__notify-footer-btn">
@@ -275,7 +329,7 @@ class Topbar extends Component {
             {/* Header Search */}
             <ul className="navbar__list">
               <Link to="/">
-                <li className="navbar__item active"> Trang chủ</li>
+                <li className="navbar__item"> Trang chủ</li>
               </Link>
               <Link to="/about">
                 {" "}

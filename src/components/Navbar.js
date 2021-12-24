@@ -75,7 +75,7 @@ class NavBar extends Component {
                         </div>
                         <nav className="nav-menu d-none d-lg-block">
                         <ul>
-                            <li className="active"><Link to="/">TRANG CHỦ</Link></li>
+                            <li><Link to="/">TRANG CHỦ</Link></li>
                             <li><Link to="/about">GIỚI THIỆU</Link></li>
                             <li><Link to="/services">DỊCH VỤ</Link></li>
                             <li><Link to="/products">SẢN PHẨM</Link></li>
@@ -111,7 +111,7 @@ class NavBar extends Component {
                 </div>
                 <nav className="nav-menu d-none d-lg-block">
                 <ul>
-                    <li className="active"><Link to="/">TRANG CHỦ</Link></li>
+                    <li><Link to="/">TRANG CHỦ</Link></li>
                     <li><Link to="/about">GIỚI THIỆU</Link></li>
                     <li><Link to="/services">DỊCH VỤ</Link></li>
                     <li><Link to="/products">SẢN PHẨM</Link></li>

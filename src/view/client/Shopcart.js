@@ -34,7 +34,7 @@ class Shopcart extends Component {
   }
 
 
-  checkOutClick = () =>{
+  checkOutClick = async () =>{
     axios
       .post(process.env.REACT_APP_BACKEND_URL + '/orders',{
         status:'waiting',
@@ -57,7 +57,9 @@ class Shopcart extends Component {
         }
       })
       .catch(err => {
+        this.props.history.push('/location')
       })
+      this.props.history.push('/location')
   }
   updateMeterClick = (event,index) =>{
     let productList = this.state.productList
