@@ -76,6 +76,7 @@ class OrderManager extends Component{
 
     render(){
         return(
+            
             <div className='OrderManager'>
                 <div className="page-header">
                     <div className="page-block">
@@ -93,6 +94,7 @@ class OrderManager extends Component{
                     <div className='card-body'>
                         <div className="DataList-filter">
                             <form className="form-inline w-100 m-b-10">
+                               
                                 <div className='controls'>
                                     <div className='input-prepend'>
                                         <span className='add-on'>Trạng thái</span>
@@ -127,10 +129,19 @@ class OrderManager extends Component{
                                 
                                 <button type="reset" className='btn btn-primary m-l-10' style={{marginBottom:0}}
                                     onClick={this.resetFilterClick}>Reset</button>
+                                <div className="col-md-12 col-sm-6 col-md-4 col-lg-4 col-xl-4">
+
+                                </div>
+                                
+                               
                             </form>
                         </div>
 
-                        <table className="table list-table">
+                        <div className="row">
+                                    <div className='col-12'>
+                                    <table className="table list-table">
+                            
+                           
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -178,7 +189,13 @@ class OrderManager extends Component{
                                 )
                                 })}
                             </tbody>
+                        
+                                         
                         </table>
+                                    </div>
+
+                                </div>
+                        
                         <nav aria-label="Page navigation example">
                             {/* {this.showPageNumber()} */}
                         </nav>

@@ -28,10 +28,14 @@ class Manager extends Component{
             )
         }
         return(
-            <div className='Manager'>
+            <div className='container-fuild'>
+                <div className='row align-items-center'>
+                    <div className='col-12'>
+                    <div className='Manager'>
                 <SideBar/>
                 <Header/>
                 <div className='content'>
+                    
                     <Switch>
                         <Route exact path='/manager' component={ManagerOrder} />
                         <Route path='/manager/dashboard' component={DashBoards} />
@@ -43,7 +47,12 @@ class Manager extends Component{
                         <Route path='/manager/chat' component={ManagerChat} />
                         <Route path='/manager/profile' component={Profileuser} />
                     </Switch>
+                    </div>
+                    
                 </div>
+                    </div>
+                </div>
+            
             </div>
         )
     }

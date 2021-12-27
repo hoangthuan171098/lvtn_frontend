@@ -16,8 +16,12 @@ class SideBar extends Component{
                             </a>
                             <a class="mobile-menu" id="mobile-collapse" href="#!">
                                 {/* <span></span> */}
+                                <div className="container-fuild">
+
+                                </div>
                             </a>
                         </div>
+                        
                         <div class="navbar-content scroll-div">
                             <ul class="nav pcoded-inner-navbar">
                                 <li class="nav-item pcoded-menu-caption">

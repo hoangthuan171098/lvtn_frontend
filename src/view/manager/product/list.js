@@ -96,7 +96,9 @@ class ProductList extends Component {
             <div className='card-body'>
               <div className="DataList-container">
                 <div className="DataList-filter m-b-20">
-                  <form className="form-inline w-100">
+                <div className='row'>
+                    <div className='col-12'>
+                    <form className="form-inline w-100">
                     <div className='input-prepend'>
                       <span className='add-on'>Tên</span>
                       <input
@@ -160,6 +162,9 @@ class ProductList extends Component {
                     })}
                   </tbody>
                 </table>
+                    </div>
+                </div>
+                  
               </div>
             </div>
           </div>
