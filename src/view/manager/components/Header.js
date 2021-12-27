@@ -76,6 +76,7 @@ export default withRouter(connect(mapStateToProps,mapDispatchToProps)(class Head
 	render(){
 		return(
 			<header className="navbar pcoded-header navbar-expand-lg navbar-light headerpos-fixed">
+			<div className='container-fuild'>
 				<div className="m-header">
 					<a className="mobile-menu" id="mobile-collapse1" href="#!"><span /></a>
 					<Link to="/manager" className="b-brand">
@@ -87,7 +88,7 @@ export default withRouter(connect(mapStateToProps,mapDispatchToProps)(class Head
 					<i className="feather icon-more-horizontal" />
 				</a>
 				<div className="collapse navbar-collapse">
-					<a href="#!" className="mob-toggler" />
+					
 					<ul className="navbar-nav mr-auto">
 						<li className="nav-item">
 							<div className="main-search open">
@@ -161,6 +162,7 @@ export default withRouter(connect(mapStateToProps,mapDispatchToProps)(class Head
 							</div>
 						</li>
 					</ul>
+				</div>
 				</div>
 			</header>
 		)
